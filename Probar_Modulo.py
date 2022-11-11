@@ -12,6 +12,7 @@ def Script_Menu():
             '2. Aptitude\n'
             '3. Repositorios no libres\n'
             '4. Activar Triple buffer\n'
+            '9. Ver comandos creados\n'
             '0. Salir\n'
             'Elige una opción: ')
         Continue()
@@ -33,12 +34,19 @@ def Script_Menu():
         elif opc == '4':
             cfg = TripleBuffer()
             cfg_save = True
+
+        elif opc == '9':
+            if pathlib.Path(cfg_file).exists():
+                with open(cfg_file, 'r') as file_cfg:
+                    reader = file_cfg.read()
+                    input(f'{reader}\n\nPreciona enter para continuar...')
         elif opc == '0':
             print('Hasta la proxima...')
             exit()
         else:
             cfg = '#Configuración erronea'
             Util.Continue(txt=opc, msg=True)
+
 
         if cfg_save == True:
             opc = Util.Continue(cfg + '\n' + Util.Separator() +

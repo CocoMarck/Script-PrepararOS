@@ -31,6 +31,13 @@ def CleanScreen(sys=sys):
         os.system('cls')
     else: pass
 
+def ShowArchive(sys=sys):
+    if sys == 'linux':
+        os.system('ls')
+    elif sys == 'win':
+        os.system('dir')
+    else: pass
+
 def Separator(spc = 128, smb = '#', see = True, sys=sys):
     '''Separar texto'''
     txt = smb*spc
