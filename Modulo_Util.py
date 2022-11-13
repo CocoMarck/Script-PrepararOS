@@ -96,7 +96,7 @@ def Continue(txt='¿Continuar?', lang = 'español', msg = False, sys=sys):
             opc = Continue(txt=txt, lang=lang)
     else:
         opc = ''
-        input(f'La opcion "{txt}" no existe\n'
+        input(f'Esa opción no existe\n'
               'Precione enter para continuar...')
         
     return opc

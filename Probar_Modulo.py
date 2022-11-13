@@ -18,11 +18,11 @@ def Script_Menu():
         Continue()
         cfg_save = False
         if opc == '1':
-            cfg = (apt(txt='update') + ' &&\n\n' +
-                App_essential(txt='&&\n\n') + App_dependence(txt='&&\n\n') +
-                App_desktop(txt='&&\n\n') + App_optional(txt='&&\n\n') +
-                App_purge(txt='&&\n\n') + Repository(txt='&&\n\n') +
-                TripleBuffer(txt='&&\n\n') +
+            cfg = (apt('update') + ' &&\n\n' +
+                App_essential('&&\n\n') + App_dependence('&&\n\n') +
+                App_desktop('&&\n\n') + App_optional('&&\n\n') +
+                App_purge('&&\n\n') + Repository(txt='&&\n\n') +
+                TripleBuffer('&&\n\n') +
                 apt('clean') )
             cfg_save = True
         elif opc == '2':
@@ -59,11 +59,15 @@ def Script_Menu():
             else:
                 Util.Continue(txt=opc, msg=True)
 
+
+
 def Continue(txt='¿Continuar?'):
     opc = Util.Continue(txt=txt)
     if opc == 's': pass
     elif opc == 'n': Main()
     else: pass
+
+
 
 def apt(txt = ''):
     cmd = 'sudo apt '
@@ -80,6 +84,8 @@ def apt(txt = ''):
         cmd = cmd + txt
     return cmd
 
+
+
 def System_apt():
     opc = input(Util.Title(txt='Opciones aptitude', see=False) +
         '1. Actualizar\n'
@@ -90,9 +96,12 @@ def System_apt():
     elif opc == '2':
         cfg = apt('clean')
     else:
+        Util.Continue(msg=True)
         cfg = '#Configuración erronea'
     Util.CleanScreen()
     return cfg
+
+
 
 def App_essential(txt=''):
     app_est = (Util.Title(txt = 'Programas Necesarios', see=False) +
@@ -104,7 +113,11 @@ def App_essential(txt=''):
 
         Util.Title(txt='Servico ntp (para que se sincronize la hora)') + '\n'
         f'sudo systemctl enable ntp {txt}')
+
+
     return app_est
+
+
 
 def App_dependence(txt = ''):
     app_dpc = (Util.Title(txt='Algunas Dependencias', see=False) +
@@ -113,7 +126,11 @@ def App_dependence(txt = ''):
         'gir1.2-libxfce4ui-2.0 gir1.2-libxfce4util-1.0 libc6:i386 '
         'libasound2:i386 libasound2-data:i386 libasound2-plugins:i386 '
         'libgtk2.0-0:i386 libxml2:i386 libsm6:i386 libqt5widgets5 ' + txt)
+
+
     return app_dpc
+
+
 
 def App_desktop(txt=''):
     app_xfce4 = (Util.Title(txt = 'Programas Xfce4', see=False) +
@@ -125,6 +142,8 @@ def App_desktop(txt=''):
     app_KDEplasma = (Util.Title(txt = 'Programas', see=False) +
         apt(txt='install') + ' '
         f'rofi {txt}')
+
+
     opc = input(Util.Title(txt='Programas para Escritorios', see=False) +
         '1. Xfce4\n'
         '2. Kdenlive\n'
@@ -134,9 +153,14 @@ def App_desktop(txt=''):
     elif opc == '2':
         cfg = app_KDEplasma
     else:
+        Util.Continue(msg=True)
         cfg = '#Configuracion erronea\n\n'
     Util.CleanScreen()
+
+
     return cfg
+
+
 
 def App_optional(txt=''):
     flatpak = (Util.Title(txt = 'Flatpak', see=False) +
@@ -182,9 +206,15 @@ def App_optional(txt=''):
     elif opc == '0':
         cfg = ''
     else:
+        Util.Continue(msg=True)
         cfg = '#Configuracion erronea\n\n'
+
     Util.CleanScreen()
+
+
     return cfg
+
+
 
 def App_purge(txt=''):
     app_prg = (Util.Title(txt='Desinstalar Programas', see=False) +
@@ -192,13 +222,21 @@ def App_purge(txt=''):
         'mozc-data mozc-server mlterm-common xiterm+thai '
         'fcitx-data fcitx5-data goldendict uim anthy kasumi '
         f'audacious {txt}')
+
+
     return app_prg
+
+
 
 def Repository(txt=''):
     cfg = (Util.Title(txt='Repositorios', see=False) +
         'sudo mv /etc/apt/sources.list /etc/apt/BackUp_sources.list &&\n'
         f'sudo cp sources.txt /etc/apt/sources.list {txt}')
+
+
     return cfg
+
+
 
 def TripleBuffer(txt=''):
     cfg = Util.Title(txt='Triple Buffer', see=False) + '\n'
@@ -237,9 +275,14 @@ def TripleBuffer(txt=''):
     elif opc == '0':
         cfg, file_copy = '', ''
     else:
+        Util.Continue(msg=True)
         cfg, file_copy = f'#Configuración erronea {txt}', ''
+
     cfg = cfg + file_copy
+
+
     return cfg
+
 
 
 if __name__ =='__main__':
