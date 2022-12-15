@@ -72,16 +72,18 @@ def Continue(txt='¿Continuar?'):
 def apt(txt = ''):
     cmd = 'sudo apt '
     if txt == 'update':
-        cmd = cmd + txt + ' && ' + cmd + 'upgrade'
+        cmd = Util.Aptitude('update')
 
     elif txt == 'clean':
-        cmd = cmd + 'autoremove && ' + cmd + txt
+        cmd = Util.Aptitude('clean')
 
     elif txt == 'install':
-        cmd = cmd + txt
+        cmd = Util.Aptitude('install')
 
     elif txt == 'purge':
-        cmd = cmd + txt
+        cmd = Util.Aptitude('purge')
+
+
     return cmd
 
 
@@ -104,12 +106,15 @@ def System_apt():
 
 
 def App_essential(txt=''):
+    # Leer Archivo.txt y almacenar info en una sola variable.
+    with open("App_Essential.dat", "r") as file_txt:
+        txt_file = file_txt.readlines()
+        txt_fnl = ''
+        for txt_ln in txt_file:
+            txt_fnl += txt_ln.replace('\n', ' ')
+
     app_est = (Util.Title(txt = 'Programas Necesarios', see=False) +
-        f"{apt(txt='install')} "
-        'bleachbit transmission p7zip-full eog ffmpeg scrcpy adb htop '
-        'neofetch mpv gdebi mangohud thunderbird wget openjfx git curl '
-        'youtube-dl gnome-sound-recorder libsdl2-mixer-2.0-0 cpu-x ntp '
-        'gnome-disk-utility fonts-noto-color-emoji telegram-desktop &&\n\n' +
+        f"{apt(txt='install')} " + txt_fnl + ' &&\n\n' +
 
         Util.Title(txt='Servico ntp (para que se sincronize la hora)') + '\n'
         f'sudo systemctl enable ntp {txt}')
@@ -120,12 +125,15 @@ def App_essential(txt=''):
 
 
 def App_dependence(txt = ''):
+    with open("App_Dependence.dat", "r") as file_txt:
+        txt_file = file_txt.readlines()
+        txt_fnl = ''
+        for txt_ln in txt_file:
+            txt_fnl += txt_ln.replace('\n', ' ')
+
     app_dpc = (Util.Title(txt='Algunas Dependencias', see=False) +
         'sudo dpkg --add-architecture i386 &&\n'
-        f"{apt(txt='update')} && {apt(txt='install')} "
-        'gir1.2-libxfce4ui-2.0 gir1.2-libxfce4util-1.0 libc6:i386 '
-        'libasound2:i386 libasound2-data:i386 libasound2-plugins:i386 '
-        'libgtk2.0-0:i386 libxml2:i386 libsm6:i386 libqt5widgets5 ' + txt)
+        f"{apt(txt='update')} && {apt(txt='install')} " + txt_fnl + f' {txt}')
 
 
     return app_dpc
@@ -133,28 +141,63 @@ def App_dependence(txt = ''):
 
 
 def App_desktop(txt=''):
-    app_xfce4 = (Util.Title(txt = 'Programas Xfce4', see=False) +
-        apt(txt='install') + ' '
-        'gnome-calculator eog bijiben gvfs-backends gparted menulibre '
-        'lightdm-gtk-greeter-settings gnome-software blueman atril '
-        'file-roller xfce4-goodies telegram-desktop redshift-gtk ' + txt)
+    app_xfce4 = [
+        'gnome-calculator', 
+        'eog',
+        'bijiben',
+        'gvfs-backends',
+        'gparted',
+        'menulibre',
+        'lightdm-gtk-greeter-settings',
+        'gnome-software',
+        'blueman',
+        'atril',
+        'file-roller',
+        'xfce4-goodies',
+        'telegram-desktop',
+        'redshift-gtk'
+    ]
 
-    app_KDEplasma = (Util.Title(txt = 'Programas', see=False) +
-        apt(txt='install') + ' '
-        f'rofi {txt}')
+    app_KDEplasma = [
+        'rofi',
+        ''
+    ]
+
 
 
     opc = input(Util.Title(txt='Programas para Escritorios', see=False) +
         '1. Xfce4\n'
         '2. Kdenlive\n'
         'Elige una opción: ')
+
+    txt_fnl = ''
+    cfg_save = True
     if opc == '1':
-        cfg = app_xfce4
+        for txt_vrb in app_xfce4:
+            txt_fnl += txt_vrb + ' '
+
+        cfg = 'Programas Xfce'
+
+
     elif opc == '2':
-        cfg = app_KDEplasma
+        for txt_vrb in app_KDEplasma:
+            txt_fnl += txt_vrb + ' '
+
+        cfg = 'Programas Kdenlive'
+
+
     else:
+        cfg_save = False
         Util.Continue(msg=True)
-        cfg = '#Configuracion erronea\n\n'
+
+    if cfg_save == True:
+        cfg = (
+            Util.Title(txt = cfg, see=False) + apt(txt='install') + ' ' +
+            txt_fnl + txt
+        )
+    else: cfg = '#Configuración erronea (Programas de Escritorio)\n\n'
+
+
     Util.CleanScreen()
 
 
@@ -217,11 +260,14 @@ def App_optional(txt=''):
 
 
 def App_purge(txt=''):
+    with open("App_Uninstall.dat", "r") as file_txt:
+        txt_file = file_txt.readlines()
+        txt_fnl = ''
+        for txt_ln in txt_file:
+            txt_fnl += txt_ln.replace('\n', ' ')
+
     app_prg = (Util.Title(txt='Desinstalar Programas', see=False) +
-        apt(txt='purge') + ' '
-        'mozc-data mozc-server mlterm-common xiterm+thai '
-        'fcitx-data fcitx5-data goldendict uim anthy kasumi '
-        f'audacious {txt}')
+        apt(txt='purge') + ' ' + txt_fnl + f' {txt}')
 
 
     return app_prg

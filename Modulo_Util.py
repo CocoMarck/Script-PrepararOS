@@ -30,10 +30,36 @@ def System(opc = 'System'):
             os.system('dir')
         else: pass
 
+
     else: pass
 
 
     return cmd
+
+def Aptitude(opc = 'clean'):
+    sys = System('System')
+    if sys == 'linux':
+        txt = 'sudo apt'
+        if opc == 'update':
+            cmd = f'{txt} {opc} && sudo apt upgrade'
+
+        elif opc == 'clean':
+            cmd = f'{txt} autoremove && {opc}'
+
+        elif opc == 'install':
+            cmd = f'{txt} {opc}'
+
+        elif opc == 'purge':
+            cmd = f'{txt} {opc}'
+
+        else: cmd = ''
+
+    else: cmd = ''
+
+
+    return cmd
+
+
 
 def CleanScreen():
     System('CleanScreen')

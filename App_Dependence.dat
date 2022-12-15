@@ -1,0 +1,10 @@
+gir1.2-libxfce4ui-2.0
+gir1.2-libxfce4util-1.0
+libc6:i386
+libasound2:i386
+libasound2-data:i386
+libasound2-plugins:i386
+libgtk2.0-0:i386
+libxml2:i386
+libsm6:i386
+libqt5widgets5
