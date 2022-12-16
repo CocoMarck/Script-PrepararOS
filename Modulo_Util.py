@@ -36,6 +36,9 @@ def System(opc = 'System'):
 
     return cmd
 
+
+
+
 def Aptitude(opc = 'clean'):
     sys = System('System')
     if sys == 'linux':
@@ -61,11 +64,14 @@ def Aptitude(opc = 'clean'):
 
 
 
+
 def CleanScreen():
     System('CleanScreen')
 
 
 sys = System()
+
+
 
 
 def Show(opc = 'Title', txt = '', smb = '#', see = True, spc = 4):
@@ -100,9 +106,15 @@ def Title(txt='', smb = '#', see = True, spc = 4):
     txt = Show(opc='Title', txt=txt, smb=smb, see=see, spc=spc)
     return txt
 
+
+
+
 def Separator(smb = '#', see = True, spc = 128):
     txt = Show(opc='Separator', smb=smb, see=see, spc=spc)
     return txt
+
+
+
 
 def Continue(txt='¿Continuar?', lang = 'español', msg = False, sys=sys):
     idm = ['']*2
@@ -127,6 +139,9 @@ def Continue(txt='¿Continuar?', lang = 'español', msg = False, sys=sys):
         
     return opc
 
+
+
+
 def Name(txt = 'Archivo', sys=sys):
     nme = input(Title(txt=f'Nombre de {txt}', see=False) +
               'Nombre: ')
@@ -135,6 +150,9 @@ def Name(txt = 'Archivo', sys=sys):
     else: pass
     CleanScreen()
     return nme
+
+
+
 
 def Path(txt = 'Ruta', sys=sys):
 #    pth = ''

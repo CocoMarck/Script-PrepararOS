@@ -61,11 +61,13 @@ def Script_Menu():
 
 
 
+
 def Continue(txt='¿Continuar?'):
     opc = Util.Continue(txt=txt)
     if opc == 's': pass
     elif opc == 'n': Main()
     else: pass
+
 
 
 
@@ -88,6 +90,7 @@ def apt(txt = ''):
 
 
 
+
 def System_apt():
     opc = input(Util.Title(txt='Opciones aptitude', see=False) +
         '1. Actualizar\n'
@@ -105,9 +108,48 @@ def System_apt():
 
 
 
+
 def App_essential(txt=''):
+    cfg_file = 'App_Essential.dat'
+
+    if pathlib.Path(cfg_file).exists(): pass
+    else:
+        apps = [
+            'bleachbit',
+            'transmission',
+            'p7zip-full',
+            'eog',
+            'ffmpeg',
+            'scrcpy',
+            'adb',
+            'htop',
+            'neofetch',
+            'mpv',
+            'gdebi',
+            'mangohud',
+            'thunderbird',
+            'wget',
+            'openjfx',
+            'git',
+            'curl',
+            'youtube-dl',
+            'gnome-sound-recorder',
+            'libsdl2-mixer-2.0-0',
+            'cpu-x',
+            'ntp',
+            'gnome-disk-utility',
+            'fonts-noto-color-emoji',
+            'telegram-desktop'
+        ]
+
+        with open(cfg_file, "w") as file_cfg:
+            for app in apps:
+                file_cfg.write(app + "\n")
+
+
+
     # Leer Archivo.txt y almacenar info en una sola variable.
-    with open("App_Essential.dat", "r") as file_txt:
+    with open(cfg_file, "r") as file_txt:
         txt_file = file_txt.readlines()
         txt_fnl = ''
         for txt_ln in txt_file:
@@ -124,8 +166,32 @@ def App_essential(txt=''):
 
 
 
+
 def App_dependence(txt = ''):
-    with open("App_Dependence.dat", "r") as file_txt:
+    cfg_file = 'App_Dependence.dat'
+
+    if pathlib.Path(cfg_file).exists(): pass
+    else:
+        apps = [
+            'gir1.2-libxfce4ui-2.0',
+            'gir1.2-libxfce4util-1.0',
+            'libc6:i386',
+            'libasound2:i386',
+            'libasound2-data:i386',
+            'libasound2-plugins:i386',
+            'libgtk2.0-0:i386',
+            'libxml2:i386',
+            'libsm6:i386',
+            'libqt5widgets5'
+        ]
+
+        with open(cfg_file, "w") as file_cfg:
+            for app in apps:
+                file_cfg.write(app + "\n")
+
+
+
+    with open(cfg_file, "r") as file_txt:
         txt_file = file_txt.readlines()
         txt_fnl = ''
         for txt_ln in txt_file:
@@ -137,6 +203,47 @@ def App_dependence(txt = ''):
 
 
     return app_dpc
+
+
+
+
+def App_purge(txt=''):
+    cfg_file = 'App_Uninstall.dat'
+
+    if pathlib.Path(cfg_file).exists(): pass
+    else:
+        apps = [
+            'mozc-data',
+            'mozc-server',
+            'mlterm-common',
+            'xiterm+thai',
+            'fcitx-data',
+            'fcitx5-data',
+            'goldendict',
+            'uim',
+            'anthy',
+            'kasumi',
+            'audacious'
+        ]
+
+        with open(cfg_file, "w") as file_cfg:
+            for app in apps:
+                file_cfg.write(app + "\n")
+
+
+
+    with open(cfg_file, "r") as file_txt:
+        txt_file = file_txt.readlines()
+        txt_fnl = ''
+        for txt_ln in txt_file:
+            txt_fnl += txt_ln.replace('\n', ' ')
+
+    app_prg = (Util.Title(txt='Desinstalar Programas', see=False) +
+        apt(txt='purge') + ' ' + txt_fnl + f' {txt}')
+
+
+    return app_prg
+
 
 
 
@@ -205,6 +312,7 @@ def App_desktop(txt=''):
 
 
 
+
 def App_optional(txt=''):
     flatpak = (Util.Title(txt = 'Flatpak', see=False) +
         f'{apt(txt="install")} flatpak &&\n'
@@ -259,19 +367,6 @@ def App_optional(txt=''):
 
 
 
-def App_purge(txt=''):
-    with open("App_Uninstall.dat", "r") as file_txt:
-        txt_file = file_txt.readlines()
-        txt_fnl = ''
-        for txt_ln in txt_file:
-            txt_fnl += txt_ln.replace('\n', ' ')
-
-    app_prg = (Util.Title(txt='Desinstalar Programas', see=False) +
-        apt(txt='purge') + ' ' + txt_fnl + f' {txt}')
-
-
-    return app_prg
-
 
 
 def Repository(txt=''):
@@ -281,6 +376,7 @@ def Repository(txt=''):
 
 
     return cfg
+
 
 
 
@@ -328,6 +424,7 @@ def TripleBuffer(txt=''):
 
 
     return cfg
+
 
 
 
