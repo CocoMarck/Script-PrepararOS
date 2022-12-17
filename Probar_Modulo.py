@@ -248,28 +248,29 @@ def App_purge(txt=''):
 
 
 def App_desktop(txt=''):
-    app_xfce4 = [
-        'gnome-calculator', 
-        'eog',
-        'bijiben',
-        'gvfs-backends',
-        'gparted',
-        'menulibre',
-        'lightdm-gtk-greeter-settings',
-        'gnome-software',
-        'blueman',
-        'atril',
-        'file-roller',
-        'xfce4-goodies',
-        'telegram-desktop',
-        'redshift-gtk'
-    ]
+    apps = {
+        'xfce4': [
+            'gnome-calculator', 
+            'eog',
+            'bijiben',
+            'gvfs-backends',
+            'gparted',
+            'menulibre',
+            'lightdm-gtk-greeter-settings',
+            'gnome-software',
+            'blueman',
+            'atril',
+            'file-roller',
+            'xfce4-goodies',
+            'telegram-desktop',
+            'redshift-gtk'
+        ],
 
-    app_KDEplasma = [
-        'rofi',
-        ''
-    ]
-
+        'kdeplasma': [
+            'rofi',
+            ''
+        ]
+    }
 
 
     opc = input(Util.Title(txt='Programas para Escritorios', see=False) +
@@ -280,14 +281,14 @@ def App_desktop(txt=''):
     txt_fnl = ''
     cfg_save = True
     if opc == '1':
-        for txt_vrb in app_xfce4:
+        for txt_vrb in apps['xfce4']:
             txt_fnl += txt_vrb + ' '
 
         cfg = 'Programas Xfce'
 
 
     elif opc == '2':
-        for txt_vrb in app_KDEplasma:
+        for txt_vrb in apps['kdeplasma']:
             txt_fnl += txt_vrb + ' '
 
         cfg = 'Programas Kdenlive'
@@ -341,8 +342,7 @@ def App_optional(txt=''):
         '1. FlatPak\n'
         '2. Wine\n'
         '3. WoeUSB-NG\n'
-        '4. FlatPak y Wine\n'
-        '5. Todos\n'
+        '9. Todos\n'
         'Elige una opción: ')
     if opc == '1':
         cfg = flatpak + txt
@@ -350,9 +350,7 @@ def App_optional(txt=''):
         cfg = wine + txt
     elif opc == '3':
         cfg = woeusb_ng + txt
-    elif opc == '4':
-        cfg = flatpak + '&&\n\n' +  wine + txt
-    elif opc == '5':
+    elif opc == '9':
         cfg = flatpak + '&&\n\n' +  wine + '&&\n\n' + woeusb_ng + txt
     elif opc == '0':
         cfg = ''
