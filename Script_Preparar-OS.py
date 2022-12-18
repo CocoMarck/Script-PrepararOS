@@ -392,11 +392,46 @@ def App_optional(txt=''):
 
 
 def Repository(txt=''):
-    file_sources = 'Script_Preparar-OS_sources.txt'
+    file_source = 'Script_Preparar-OS_sources.txt'
+
+    if pathlib.Path(file_source).exists(): pass
+    else:
+        with open(file_source, 'w') as source_file:
+            source_file.write(
+                    '#Debian 11\n'
+                    '\n'
+                    '# Main Repo - main contrib non-free\n'
+                    'deb http://deb.debian.org/debian/ bullseye main contrib non-free\n'
+                    '#deb-src http://deb.debian.org/debian/ bullseye main contrib non-free\n'
+                    '\n'
+                    '# Security Repo - main contrib non-free\n'
+                    'deb http://security.debian.org/ bullseye-security main contrib non-free\n'
+                    '#deb-src http://security.debian.org/ bullseye-security main contrib non-free\n'
+                    '\n'
+                    '# Updates Repo - main contrib non-free\n'
+                    'deb http://deb.debian.org/debian bullseye-updates main contrib non-free\n'
+                    '#deb-src http://deb.debian.org/debian bullseye-updates main\n'
+                    '\n'
+                    '# Proposed Updates Repo - main contrib non-free\n'
+                    '#deb http://deb.debian.org/debian/ bullseye-proposed-updates main contrib non-free\n'
+                    '#deb-src http://deb.debian.org/debian/ bullseye-proposed-updates main contrib non-free\n'
+                    '\n'
+                    '# bullseye-backports, previously on backports.debian.org\n'
+                    'deb http://deb.debian.org/debian/ bullseye-backports main contrib non-free\n'
+                    '#deb-src http://deb.debian.org/debian/ bullseye-backports main contrib non-free\n'
+                    '\n'
+                    '# Testing repo used to get software not in the normal repos\n'
+                    '#deb http://deb.debian.org/debian/ testing main contrib non-free\n'
+                    '\n'
+                    '# Unstable repo used to get software not in the normal repos\n'
+                    '#deb http://deb.debian.org/debian/ unstable main contrib non-free'
+            )
+
+
 
     cfg = (Util.Title(txt='Repositorios', see=False) +
         'sudo mv /etc/apt/sources.list /etc/apt/BackUp_sources.list &&\n'
-        f'sudo cp {file_sources} /etc/apt/sources.list {txt}')
+        f'sudo cp {file_source} /etc/apt/sources.list {txt}')
 
 
     return cfg
