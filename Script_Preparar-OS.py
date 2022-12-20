@@ -19,9 +19,9 @@ def Script_Menu():
         cfg_save = False
         if opc == '1':
             cfg = (apt('update') + ' &&\n\n' +
-                App_essential('&&\n\n') + App_dependence('&&\n\n') +
-                App_desktop('&&\n\n') + App_optional('&&\n\n') +
-                App_purge('&&\n\n') + TripleBuffer('&&\n\n') +
+                App('Essential', '&&\n\n') + App('Dependence','&&\n\n') +
+                App('Desktop','&&\n\n') + App_optional('&&\n\n') +
+                App('Uninstall', '&&\n\n') + TripleBuffer('&&\n\n') +
                 apt('clean') )
             cfg_save = True
         elif opc == '2':
@@ -108,11 +108,18 @@ def System_apt():
 
 
 
-def App_essential(txt=''):
-    cfg_file = 'App_Essential.txt'
+def App(opc = '', txt = ''):
+    fnl = 'txt'
+    txt_title = ''
+    txt_add = ''
+    cfg_file = ''
+    cfg_save = True
 
-    if pathlib.Path(cfg_file).exists(): pass
-    else:
+    if opc == 'Essential':
+        cfg_file = f'App_{opc}.{fnl}'
+        txt_title = 'Programas Necesarios'
+        txt_add = apt(txt='install')
+
         apps = [
             'bleachbit',
             'transmission',
@@ -138,39 +145,18 @@ def App_essential(txt=''):
             'ntp',
             'gnome-disk-utility',
             'fonts-noto-color-emoji',
-            'telegram-desktop'
+            'telegram-desktop',
+            '&& sudo systemctl enable ntp'
         ]
 
-        with open(cfg_file, "w") as file_cfg:
-            for app in apps:
-                file_cfg.write(app + "\n")
 
+    elif opc == 'Dependence':
+        cfg_file = f'App_{opc}.{fnl}'
+        txt_title = 'Programas Dependencias/Librerias'
+        txt_add = (
+            f'sudo dpkg --add-architecture i386 {txt}' + apt('install')
+        )
 
-
-    # Leer Archivo.txt y almacenar info en una sola variable.
-    with open(cfg_file, "r") as file_txt:
-        txt_file = file_txt.readlines()
-        txt_fnl = ''
-        for txt_ln in txt_file:
-            txt_fnl += txt_ln.replace('\n', ' ')
-
-    app_est = (Util.Title(txt = 'Programas Necesarios', see=False) +
-        f"{apt(txt='install')} " + txt_fnl + ' &&\n\n' +
-
-        Util.Title(txt='Servico ntp (para que se sincronize la hora)') + '\n'
-        f'sudo systemctl enable ntp {txt}')
-
-
-    return app_est
-
-
-
-
-def App_dependence(txt = ''):
-    cfg_file = 'App_Dependence.txt'
-
-    if pathlib.Path(cfg_file).exists(): pass
-    else:
         apps = [
             'gir1.2-libxfce4ui-2.0',
             'gir1.2-libxfce4util-1.0',
@@ -184,33 +170,12 @@ def App_dependence(txt = ''):
             'libqt5widgets5'
         ]
 
-        with open(cfg_file, "w") as file_cfg:
-            for app in apps:
-                file_cfg.write(app + "\n")
 
+    elif opc == 'Uninstall':
+        cfg_file = f'App_{opc}.{fnl}'
+        txt_title = 'Programas a Desinstalar'
+        txt_add = apt('purge')
 
-
-    with open(cfg_file, "r") as file_txt:
-        txt_file = file_txt.readlines()
-        txt_fnl = ''
-        for txt_ln in txt_file:
-            txt_fnl += txt_ln.replace('\n', ' ')
-
-    app_dpc = (Util.Title(txt='Algunas Dependencias', see=False) +
-        'sudo dpkg --add-architecture i386 &&\n'
-        f"{apt(txt='update')} && {apt(txt='install')} " + txt_fnl + f' {txt}')
-
-
-    return app_dpc
-
-
-
-
-def App_purge(txt=''):
-    cfg_file = 'App_Uninstall.txt'
-
-    if pathlib.Path(cfg_file).exists(): pass
-    else:
         apps = [
             'mozc-data',
             'mozc-server',
@@ -225,37 +190,11 @@ def App_purge(txt=''):
             'audacious'
         ]
 
-        with open(cfg_file, "w") as file_cfg:
-            for app in apps:
-                file_cfg.write(app + "\n")
 
+    elif opc == 'Desktop':
+        cfg_file_xfce4 = f'App_{opc}-Xfce4.{fnl}'
+        cfg_file_kdeplasma = f'App_{opc}-KdePlasma.{fnl}'
 
-
-    with open(cfg_file, "r") as file_txt:
-        txt_file = file_txt.readlines()
-        txt_fnl = ''
-        for txt_ln in txt_file:
-            txt_fnl += txt_ln.replace('\n', ' ')
-
-    app_prg = (Util.Title(txt='Desinstalar Programas', see=False) +
-        apt(txt='purge') + ' ' + txt_fnl + f' {txt}')
-
-
-    return app_prg
-
-
-
-
-def App_desktop(txt=''):
-    cfg_file_xfce4 = 'App_Desktop-Xfce4.txt'
-    cfg_file_kdeplasma = 'App_Desktop-KdePlasma.txt'
-
-    if (
-        pathlib.Path(cfg_file_xfce4).exists() or 
-        pathlib.Path(cfg_file_kdeplasma).exists()
-    ): pass
-
-    else:
         apps = {
             'xfce4': [
                 'gnome-calculator', 
@@ -280,58 +219,75 @@ def App_desktop(txt=''):
             ]
         }
 
-        with open(cfg_file_xfce4, "w") as file_cfg:
-            for app in apps['xfce4']:
-                file_cfg.write(app + "\n")
+        if (
+            pathlib.Path(cfg_file_xfce4).exists() or 
+            pathlib.Path(cfg_file_kdeplasma).exists()
+        ): pass
 
-        with open(cfg_file_kdeplasma, "w") as file_cfg:
-            for app in apps['kdeplasma']:
-                file_cfg.write(app + "\n")
+        else:
+            with open(cfg_file_xfce4, "w") as file_cfg:
+                for app in apps['xfce4']:
+                    file_cfg.write(app + "\n")
 
+            with open(cfg_file_kdeplasma, "w") as file_cfg:
+                for app in apps['kdeplasma']:
+                    file_cfg.write(app + "\n")
 
-
-
-    opc = input(Util.Title(txt='Programas para Escritorios', see=False) +
-        '1. Xfce4\n'
-        '2. Kdenlive\n'
-        'Elige una opción: ')
-
-    txt_fnl = ''
-    cfg_save = True
-    if opc == '1':
-        with open(cfg_file_xfce4, "r") as file_txt:
-            txt_file = file_txt.readlines()
-            txt_fnl = ''
-            for txt_ln in txt_file:
-                txt_fnl += txt_ln.replace('\n', ' ')
-
-        cfg = 'Programas Xfce'
+        opc = input(Util.Title(txt='Programas para Escritorios', see=False) +
+            '1. Xfce4\n'
+            '2. Kdenlive\n'
+            'Elige una opción: ')
+            
+        if opc == '1':
+            cfg_file = cfg_file_xfce4
+            txt_title = 'Programas para Xfce4'
+            txt_add = apt('install')
 
 
-    elif opc == '2':
-        with open(cfg_file_kdeplasma, "r") as file_txt:
-            txt_file = file_txt.readlines()
-            txt_fnl = ''
-            for txt_ln in txt_file:
-                txt_fnl += txt_ln.replace('\n', ' ')
+        elif opc == '2':
+            cfg_file = cfg_file_kdeplasma
+            txt_title = 'Programas para KDE Plasma'
+            txt_add = apt('install')
 
-        cfg = 'Programas Kdenlive'
+        else:
+            cfg_save = False
+            Util.Continue(msg=True)
 
+        if cfg_save == True: pass
+        else: txt_add = ''
+
+
+        Util.CleanScreen()
+
+    else: 
+        txt_title = 'Configuración erronea'
+        txt_add = '\n\n'
+
+
+
+
+    if (
+        pathlib.Path(cfg_file).exists() or
+        cfg_file == ''
+    ): pass
 
     else:
-        cfg_save = False
-        Util.Continue(msg=True)
-
-    if cfg_save == True:
-        cfg = (
-            Util.Title(txt = cfg, see=False) + apt(txt='install') + ' ' +
-            txt_fnl + txt
-        )
-    else: cfg = '#Configuración erronea (Programas de Escritorio)\n\n'
+        with open(cfg_file, "w") as file_cfg:
+            for app in apps:
+                file_cfg.write(app + "\n")
 
 
-    Util.CleanScreen()
+    # Leer Archivo.txt y almacenar info en una sola variable.
+    with open(cfg_file, "r") as file_txt:
+        txt_file = file_txt.readlines()
+        txt_fnl = ''
+        for txt_ln in txt_file:
+            txt_fnl += txt_ln.replace('\n', ' ')
 
+    cfg = (
+        Util.Title(txt = txt_title, see=False) +
+        txt_add + ' ' + txt_fnl + txt
+    )
 
     return cfg
 
@@ -477,7 +433,7 @@ def TripleBuffer(txt=''):
         cfg, file_copy = '', ''
     else:
         Util.Continue(msg=True)
-        cfg, file_copy = f'#Configuración erronea {txt}', ''
+        cfg, file_copy = f'# Configuración erronea {txt}', ''
 
     cfg = cfg + file_copy
 
