@@ -109,11 +109,14 @@ def System_apt():
 
 
 def App(opc = '', txt = ''):
-    fnl = 'txt'
-    txt_title = ''
-    txt_add = ''
+    cfg = '# Sin configurar\n\n'
     cfg_file = ''
     cfg_save = True
+    txt_title = ''
+    txt_add = ''
+    txt_fnl = ''
+    fnl = 'txt'
+
 
     if opc == 'Essential':
         cfg_file = f'App_{opc}.{fnl}'
@@ -259,9 +262,8 @@ def App(opc = '', txt = ''):
 
         Util.CleanScreen()
 
-    else: 
-        txt_title = 'Configuración erronea'
-        txt_add = '\n\n'
+    else:
+        cfg_save = False
 
 
 
@@ -277,17 +279,20 @@ def App(opc = '', txt = ''):
                 file_cfg.write(app + "\n")
 
 
-    # Leer Archivo.txt y almacenar info en una sola variable.
-    with open(cfg_file, "r") as file_txt:
-        txt_file = file_txt.readlines()
-        txt_fnl = ''
-        for txt_ln in txt_file:
-            txt_fnl += txt_ln.replace('\n', ' ')
+    if cfg_save == True:
+        # Leer Archivo.txt y almacenar info en una sola variable.
+        with open(cfg_file, "r") as file_txt:
+            txt_file = file_txt.readlines()
+            txt_fnl = ''
+            for txt_ln in txt_file:
+                txt_fnl += txt_ln.replace('\n', ' ')
+        cfg = (
+            Util.Title(txt = txt_title, see=False) +
+            txt_add + ' ' + txt_fnl + txt
+        )
 
-    cfg = (
-        Util.Title(txt = txt_title, see=False) +
-        txt_add + ' ' + txt_fnl + txt
-    )
+    else: pass
+
 
     return cfg
 
