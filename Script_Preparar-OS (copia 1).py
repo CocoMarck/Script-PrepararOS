@@ -173,6 +173,7 @@ def App(
 
     cfg = '# Sin configurar\n\n'
     cfg_save = True
+    cfg_dir = './Script_Preparar-OS_Apps/'
     txt_title = ''
     txt_add = ''
     txt_fnl = ''
@@ -361,7 +362,11 @@ def App(
     else: pass
 
 
-
+    if cfg_file == '': pass
+    else:
+         if pathlib.Path(cfg_dir).exists(): pass
+         else: os.mkdir(cfg_dir)
+         cfg_file = cfg_dir + cfg_file
 
     if (
         pathlib.Path(cfg_file).exists() or
