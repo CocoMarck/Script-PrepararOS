@@ -47,7 +47,7 @@ def Aptitude(opc = 'clean'):
             cmd = f'{txt} {opc} && sudo apt upgrade'
 
         elif opc == 'clean':
-            cmd = f'{txt} autoremove && {opc}'
+            cmd = f'{txt} autoremove && {txt} {opc}'
 
         elif opc == 'install':
             cmd = f'{txt} {opc}'
@@ -116,26 +116,40 @@ def Separator(smb = '#', see = True, spc = 128):
 
 
 
-def Continue(txt='¿Continuar?', lang = 'español', msg = False, sys=sys):
+def Continue(
+        txt='¿Continuar?',
+        lang = 'español', msg = False,
+        sys=sys,
+        loop = True
+    ):
     idm = ['']*2
     if lang == 'español': idm[0], idm[1] = 's', 'n'
     elif lang == 'english': idm[0], idm[1] = 'y', 'n'
     else: idm[0], idm[1] = '', ''
 
-    if msg == False:
-        opc = input(f'{txt} {idm[0]}/{idm[1]}: ')
-        if opc == 's': System('CleanScreen')
-        elif opc == 'n': System('CleanScreen')
-        elif opc == '':
-            print('No escribiste nada')
-            opc = Continue(txt=txt, lang=lang)
-        else: 
-            print(f'"{opc}" No existe')
-            opc = Continue(txt=txt, lang=lang)
-    else:
-        opc = ''
-        input(f'Esa opción no existe\n'
-              'Precione enter para continuar...')
+    opc = ''
+
+    while loop == True:
+        if msg == False:
+            opc = input(f'{txt} {idm[0]}/{idm[1]}: ')
+            System('CleanScreen')
+
+            if (
+                opc == 's' or
+                opc == 'n'
+            ): loop = False
+
+            elif opc == '':
+                print('No escribiste nada\n')
+                opc = Continue(txt=txt, lang=lang, loop = False)
+
+            else: 
+                print(f'"{opc}" No existe\n')
+                opc = Continue(txt=txt, lang=lang, loop = False)
+        else:
+            loop = False
+            input(f'Esa opción no existe\n'
+                  'Precione enter para continuar...')
         
     return opc
 

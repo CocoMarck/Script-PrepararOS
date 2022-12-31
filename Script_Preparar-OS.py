@@ -1,8 +1,10 @@
 import os, pathlib
 import Modulo_Util as Util
 
+fnl = 'txt'
+
 def Script_Menu():
-    cfg_file = 'Script_Preparar-OS_CFG.txt'
+    cfg_file = f'Script_Preparar-OS_CFG.{fnl}'
 
     loop = True
     while loop == True:
@@ -15,7 +17,17 @@ def Script_Menu():
             '9. Ver comandos creados\n'
             '0. Salir\n'
             'Elige una opción: ')
-        Continue()
+
+        if (
+            opc == '1' or
+            opc == '2' or
+            opc == '3' or
+            opc == '4' or
+            opc == '9' or
+            opc == '0'
+        ): Continue()
+        else: pass
+
         cfg_save = False
         if opc == '1':
             cfg = (apt('update') + ' &&\n\n' +
@@ -24,12 +36,15 @@ def Script_Menu():
                 App('Uninstall', '&&\n\n') + TripleBuffer('&&\n\n') +
                 apt('clean') )
             cfg_save = True
+
         elif opc == '2':
             cfg = System_apt()
             cfg_save = True
+
         elif opc == '3':
             cfg = Repository()
             cfg_save = True
+
         elif opc == '4':
             cfg = TripleBuffer()
             cfg_save = True
@@ -39,12 +54,14 @@ def Script_Menu():
                 with open(cfg_file, 'r') as file_cfg:
                     reader = file_cfg.read()
                     input(f'{reader}\n\nPreciona enter para continuar...')
+
         elif opc == '0':
             print('Hasta la proxima...')
             exit()
+
         else:
             cfg = '#Configuración erronea'
-            Util.Continue(txt=opc, msg=True)
+            Util.Continue(msg=True)
 
 
         if cfg_save == True:
@@ -54,9 +71,9 @@ def Script_Menu():
                 os.system(cfg)
                 with open(cfg_file, 'a') as file_cfg:
                     file_cfg.write(cfg + f'\n#{Util.Separator(see=False)}\n')
-            elif opc == 'n': pass
-            else:
-                Util.Continue(txt=opc, msg=True)
+                input('Precione enter para continuar....')
+
+            else: pass
 
 
 
@@ -177,7 +194,6 @@ def App(
     txt_title = ''
     txt_add = ''
     txt_fnl = ''
-    fnl = 'txt'
 
     if (
         opc == 'Essential' or
@@ -398,7 +414,7 @@ def App(
 
 
 def Repository(txt=''):
-    file_source = 'Script_Preparar-OS_sources.txt'
+    file_source = f'Script_Preparar-OS_sources.{fnl}'
 
     if pathlib.Path(file_source).exists(): pass
     else:
@@ -455,7 +471,7 @@ def TripleBuffer(txt=''):
                 '0. No hacer nada\n'
                 'Elige una opcion: ')
     Util.CleanScreen()
-    file_txt = 'Script_Preparar-OS_TripleBuffer.txt'
+    file_txt = f'Script_Preparar-OS_TripleBuffer.{fnl}'
     file_copy = f'sudo cp {file_txt}'
     path = '/etc/X11/xorg.conf.d/'
     if opc == '1':
