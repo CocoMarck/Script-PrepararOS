@@ -65,6 +65,7 @@ def Script_Menu():
 
 
         if cfg_save == True:
+            Util.CleanScreen()
             opc = Util.Continue(cfg + '\n' + Util.Separator() +
                                 '\n¿Continuar?')
             if opc == 's':
@@ -258,7 +259,7 @@ def App(
 
 
 
-        opc = input(Util.Title(txt='Programas para Escritorios', see=False) +
+        opc = input(Util.Title(txt='Aplicaciones para Escritorio', see=False) +
             '1. Xfce4\n'
             '2. Kdenlive\n'
             'Elige una opción: ')
@@ -275,7 +276,9 @@ def App(
             txt_add = apt(txt='install')
 
 
-        else: cfg_save = False
+        else: 
+            cfg_save = False
+            cfg = 'Aplicaciones de escritorio'
 
 
     elif (
@@ -361,11 +364,11 @@ def App(
             cfg, txt = '', ''
 
         else:
-            cfg = '# Configuración erronea (Applicaciones opcionales)\n\n'
-            Util.Continue(msg=True)
+            cfg_save = False
+            cfg = 'Aplicaciones opcionales'
 
 
-    else: pass
+    else: cfg_save = None
 
 
     if cfg_file == '': pass
@@ -401,9 +404,12 @@ def App(
             txt_add + txt_fnl + txt
         )
 
-    else:
+    elif cfg_save == False:
         txt_add = ''
-        #Util.Continue(msg=True)
+        cfg = f'# Configuración erronea ({cfg})\n\n'
+        Util.Continue(msg=True)
+
+    else: txt_add, cfg = '', ''
 
     Util.CleanScreen()
 
@@ -464,13 +470,14 @@ def Repository(txt=''):
 def TripleBuffer(txt=''):
     cfg = Util.Title(txt='Triple Buffer', see=False)
     os.system('grep drivers /var/log/Xorg.0.log ')
+
     print('\n')
     opc = input(Util.Title(txt='Activar Triple buffer', see=False) +
                 '1. Grafica AMD\n'
                 '2. Grafica Intel\n'
                 '0. No hacer nada\n'
                 'Elige una opcion: ')
-    Util.CleanScreen()
+
     file_txt = f'Script_Preparar-OS_TripleBuffer.{fnl}'
     file_copy = f'sudo cp {file_txt}'
     path = '/etc/X11/xorg.conf.d/'
@@ -495,11 +502,11 @@ def TripleBuffer(txt=''):
         file_copy = (f'{file_copy} {path}20-intel-gpu.conf &&\n\n'
                      f'sudo rm {path}20-radeon.conf && \n'
                      f'sudo rm {path}20-amdgpu.conf {txt}')
-    elif opc == '0':
-        cfg, file_copy = '', ''
+
+    elif opc == '0': cfg, file_copy = '', ''
     else:
         Util.Continue(msg=True)
-        cfg, file_copy = f'# Configuración erronea {txt}', ''
+        cfg, file_copy = f'# Configuración erronea (Triple Buffer)\n\n', ''
 
     cfg = cfg + file_copy
 
