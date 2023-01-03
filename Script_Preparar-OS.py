@@ -2,13 +2,14 @@ import os, pathlib
 import Modulo_Util as Util
 
 fnl = 'txt'
+err = '# Configuración erronea'
 
 def Script_Menu():
     cfg_file = f'Script_Preparar-OS_CFG.{fnl}'
 
     loop = True
     while loop == True:
-        Util.CleanScreen()    
+        Util.CleanScreen()
         opc = input(Util.Title(txt='Preparar sistema', see=False) +
             '1. Automatico\n'
             '2. Aptitude\n'
@@ -28,39 +29,38 @@ def Script_Menu():
         ): Continue()
         else: pass
 
-        cfg_save = False
+        cfg_save = True
         if opc == '1':
             cfg = (apt('update') + ' &&\n\n' +
                 App('Essential', '&&\n\n') + App('Dependence','&&\n\n') +
                 App('Desktop','&&\n\n') + App('Optional','&&\n\n') +
                 App('Uninstall', '&&\n\n') + TripleBuffer('&&\n\n') +
                 apt('clean') )
-            cfg_save = True
 
         elif opc == '2':
             cfg = System_apt()
-            cfg_save = True
 
         elif opc == '3':
             cfg = Repository()
-            cfg_save = True
 
         elif opc == '4':
             cfg = TripleBuffer()
-            cfg_save = True
 
         elif opc == '9':
+            cfg_save = False
             if pathlib.Path(cfg_file).exists():
                 with open(cfg_file, 'r') as file_cfg:
                     reader = file_cfg.read()
                     input(f'{reader}\n\nPreciona enter para continuar...')
 
         elif opc == '0':
+            cfg_save = False
             print('Hasta la proxima...')
             exit()
 
         else:
-            cfg = '#Configuración erronea'
+            cfg_save = False
+            cfg = err + '\n\n'
             Util.Continue(msg=True)
 
 
@@ -119,7 +119,7 @@ def System_apt():
         cfg = apt('clean')
     else:
         Util.Continue(msg=True)
-        cfg = '#Configuración erronea'
+        cfg = err + '\n\n'
     Util.CleanScreen()
     return cfg
 
@@ -406,7 +406,7 @@ def App(
 
     elif cfg_save == False:
         txt_add = ''
-        cfg = f'# Configuración erronea ({cfg})\n\n'
+        cfg = f'{err} ({cfg})\n\n'
         Util.Continue(msg=True)
 
     else: txt_add, cfg = '', ''
@@ -506,7 +506,7 @@ def TripleBuffer(txt=''):
     elif opc == '0': cfg, file_copy = '', ''
     else:
         Util.Continue(msg=True)
-        cfg, file_copy = f'# Configuración erronea (Triple Buffer)\n\n', ''
+        cfg, file_copy = f'{err} (Triple Buffer)\n\n', ''
 
     cfg = cfg + file_copy
 
