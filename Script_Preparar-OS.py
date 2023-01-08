@@ -12,9 +12,10 @@ def Script_Menu():
         Util.CleanScreen()
         opc = input(Util.Title(txt='Preparar sistema', see=False) +
             '1. Automatico\n'
-            '2. Aptitude\n'
-            '3. Repositorios no libres\n'
-            '4. Activar Triple buffer\n'
+            '2. Instalar Apliciones\n'
+            '3. Aptitude\n'
+            '4. Repositorios no libres\n'
+            '5. Activar Triple buffer\n'
             '9. Ver comandos creados\n'
             '0. Salir\n'
             'Elige una opción: ')
@@ -24,6 +25,7 @@ def Script_Menu():
             opc == '2' or
             opc == '3' or
             opc == '4' or
+            opc == '5' or
             opc == '9' or
             opc == '0'
         ): Continue()
@@ -31,19 +33,49 @@ def Script_Menu():
 
         cfg_save = True
         if opc == '1':
-            cfg = (apt('update') + ' &&\n\n' +
+            cfg = (
+                apt('update') + ' &&\n\n' +
                 App('Essential', '&&\n\n') + App('Dependence','&&\n\n') +
                 App('Desktop','&&\n\n') + App('Optional','&&\n\n') +
-                App('Uninstall', '&&\n\n') + TripleBuffer('&&\n\n') +
-                apt('clean') )
+                App('Uninstall', '&&\n\n') + apt('clean') + ' &&\n\n' +
+                TripleBuffer()
+            )
 
         elif opc == '2':
-            cfg = System_apt()
+             opc = input(
+                       Util.Title('Insalar Aplicaciones', see=False) +
+                       '1. Apps Necesarias\n'
+                       '2. Apps Dependencias\n'
+                       '3. Apps Escritorio\n'
+                       '4. Apps Opcionales\n'
+                       'Elige una opción: '
+                   )
+             
+             if (
+                 opc == '1' or
+                 opc == '2' or
+                 opc == '3' or
+                 opc == '4'
+             ):
+                 if opc == '1': opc = 'Essential'
+                 if opc == '2': opc = 'Dependence'
+                 if opc == '3': opc = 'Desktop'
+                 if opc == '4': opc = 'Optional'
+
+                 Continue()
+                 cfg = App(opc = opc)
+
+             else:
+                 Util.Continue(msg=True)
+                 cfg_save = False
 
         elif opc == '3':
-            cfg = Repository()
+            cfg = System_apt()
 
         elif opc == '4':
+            cfg = Repository()
+
+        elif opc == '5':
             cfg = TripleBuffer()
 
         elif opc == '9':
@@ -218,7 +250,11 @@ def App(
     elif opc == 'Desktop':
         cfg_file_desktop = {
             'xfce4' : f'App_{opc}-Xfce4.{fnl}',
-            'kdeplasma' : f'App_{opc}-KDE-Plasma.{fnl}'
+            'kdeplasma' : f'App_{opc}-KDE-Plasma.{fnl}',
+            'gnome3' : f'App_{opc}-Gnome3.{fnl}',
+            'lxde' : f'App_{opc}-LXDE.{fnl}',
+            'mate' : f'App_{opc}-Mate.{fnl}',
+
         }
 
         apps = {
@@ -242,12 +278,27 @@ def App(
             'kdeplasma': [
                 'rofi',
                 ''
-            ]
+            ],
+
+            'gnome3': [
+                ''
+            ],
+
+            'lxde': [
+                ''
+            ],
+
+            'mate': [
+                ''
+            ],
         }
 
         if (
             pathlib.Path(cfg_file_desktop['xfce4']).exists() and
-            pathlib.Path(cfg_file_desktop['kdeplasma']).exists()
+            pathlib.Path(cfg_file_desktop['kdeplasma']).exists() and
+            pathlib.Path(cfg_file_desktop['gnome3']).exists() and
+            pathlib.Path(cfg_file_desktop['lxde']).exists() and
+            pathlib.Path(cfg_file_desktop['mate']).exists()
         ): pass
 
         else:
@@ -257,23 +308,42 @@ def App(
             App(cfg_file = cfg_file_desktop['kdeplasma'],
                 apps = apps['kdeplasma'])
 
+            App(cfg_file = cfg_file_desktop['gnome3'],
+                apps = apps['gnome3'])
+
+            App(cfg_file = cfg_file_desktop['lxde'],
+                apps = apps['lxde'])
+
+            App(cfg_file = cfg_file_desktop['mate'],
+                apps = apps['mate'])
+
 
 
         opc = input(Util.Title(txt='Aplicaciones para Escritorio', see=False) +
             '1. Xfce4\n'
-            '2. Kdenlive\n'
+            '2. KDE-Plasma\n'
+            '3. Gnome 3\n'
+            '4. LXDE\n'
+            '5. Mate\n'
             'Elige una opción: ')
-            
-        if opc == '1':
-            cfg_file = cfg_file_desktop['xfce4']
-            txt_title = 'Programas para Xfce4'
-            txt_add = apt(txt='install')
 
+        if opc == '1': opc = 'xfce4'
+        if opc == '2': opc = 'kdeplasma'
+        if opc == '3': opc = 'gnome3'
+        if opc == '4': opc = 'lxde'
+        if opc == '5': opc = 'mate'
+        else: pass
 
-        elif opc == '2':
-            cfg_file = cfg_file_desktop['kdeplasma']
-            txt_title = 'Programas para KDE Plasma'
-            txt_add = apt(txt='install')
+        if (
+            opc == 'xfce4' or
+            opc == 'kdeplasma' or
+            opc == 'gnome3' or
+            opc == 'lxde' or
+            opc == 'mate'
+       ):
+           cfg_file = cfg_file_desktop[opc]
+           txt_title = f'Aplicaciones / {opc}'
+           txt_add = apt(txt='install')
 
 
         else: 
@@ -401,7 +471,7 @@ def App(
         else: txt_add += ' '
         cfg = (
             Util.Title(txt = txt_title, see=False) +
-            txt_add + txt_fnl + txt
+            f'{txt_add}{txt_fnl} {txt}'
         )
 
     elif cfg_save == False:
@@ -409,7 +479,7 @@ def App(
         cfg = f'{err} ({cfg})\n\n'
         Util.Continue(msg=True)
 
-    else: txt_add, cfg = '', ''
+    else: pass #txt_add, cfg = '', ''
 
     Util.CleanScreen()
 
@@ -421,6 +491,7 @@ def App(
 
 def Repository(txt=''):
     file_source = f'Script_Preparar-OS_sources.{fnl}'
+    pth = '/etc/apt/'
 
     if pathlib.Path(file_source).exists(): pass
     else:
@@ -457,9 +528,12 @@ def Repository(txt=''):
 
 
 
-    cfg = (Util.Title(txt='Repositorios', see=False) +
-        'sudo mv /etc/apt/sources.list /etc/apt/BackUp_sources.list &&\n'
-        f'sudo cp {file_source} /etc/apt/sources.list {txt}')
+    if pathlib.Path(pth + 'sources.list').exists():
+        cfg = (Util.Title(txt='Repositorios', see=False) +
+            f'sudo mv {pth}sources.list {pth}BackUp_sources.list &&\n'
+            f'sudo cp {file_source} {pth}sources.list {txt}')
+
+    else: cfg = f'sudo cp {file_source} {pth}sources.list {txt}'
 
 
     return cfg
@@ -471,44 +545,80 @@ def TripleBuffer(txt=''):
     cfg = Util.Title(txt='Triple Buffer', see=False)
     os.system('grep drivers /var/log/Xorg.0.log ')
 
-    print('\n')
-    opc = input(Util.Title(txt='Activar Triple buffer', see=False) +
-                '1. Grafica AMD\n'
-                '2. Grafica Intel\n'
-                '0. No hacer nada\n'
-                'Elige una opcion: ')
-
+    path = '/etc/X11/xorg.conf.d/'
     file_txt = f'Script_Preparar-OS_TripleBuffer.{fnl}'
     file_copy = f'sudo cp {file_txt}'
-    path = '/etc/X11/xorg.conf.d/'
-    if opc == '1':
-        with open(file_txt, 'w') as file_txt:
-            file_txt.write('Section "Device"\n'
-                           '   Identifier  "AMD Graphics"\n'
-                           '   Driver      "radeon"\n'
-                           '   Option      "TearFree"  "true"\n'
-                           'EndSection')
-        file_copy = (f'{file_copy} {path}20-radeon.conf &&\n\n'
-                     f'sudo rm {path}20-intel-gpu.conf && \n'
-                     f'sudo rm {path}20-amdgpu.conf {txt}')
-    elif opc == '2':
-        with open(file_txt, 'w') as file_txt:
-            file_txt.write('Section "Device"\n'
-                           '   Identifier  "Intel Graphics"\n'
-                           '   Driver      "intel"\n'
-                           '   Option      "TearFree"  "true"\n'
-                           'EndSection')
+    file_remove = f'sudo rm {path}'
 
-        file_copy = (f'{file_copy} {path}20-intel-gpu.conf &&\n\n'
-                     f'sudo rm {path}20-radeon.conf && \n'
-                     f'sudo rm {path}20-amdgpu.conf {txt}')
+    Triple_Buffer = {
+        '20-radeon.conf': [
+            'Section "Device"',
+            '   Identifier  "AMD Graphics"',
+            '   Driver      "radeon"',
+            '   Option      "TearFree"  "true"',
+            'EndSection'
+        ],
 
-    elif opc == '0': cfg, file_copy = '', ''
+        '20-amdgpu.conf': [
+            'Section "Device"',
+            '   Identifier  "AMD Graphics"',
+            '   Driver      "amdgpu"',
+            '   Option      "TearFree"  "true"',
+            'EndSection'
+        ],
+
+        '20-intel-gpu.conf': [
+            'Section "Device"',
+            '   Identifier  "Intel Graphics"',
+            '   Driver      "intel"',
+            '   Option      "TearFree"  "true"',
+            'EndSection'
+        ],
+    }
+
+    print('\n')
+    opc = input(
+              Util.Title(txt='Activar Triple buffer', see=False) +
+              '1. Grafica AMD\n'
+              '2. Grafica Intel\n'
+              '0. No hacer nada\n'
+              'Elige una opcion: '
+          )
+
+    if opc == '1': opc = '20-radeon.conf'
+    elif opc == '2': opc = '20-intel-gpu.conf'
+    else: pass
+
+    if (opc == '20-radeon.conf' or
+        opc == '20-amdgpu.conf' or
+        opc == '20-intel-gpu.conf'):
+
+        with open(file_txt, "w") as file_txt:
+            for line in Triple_Buffer[opc]:
+                file_txt.write(line + "\n")
+
+        file_copy = f'{file_copy} {path}{opc}\n\n'
+
+        if opc == '20-radeon.conf':
+            file_remove = (f'{file_remove}20-amdgpu.conf && \n'
+                           f'{file_remove}20-intel-gpu.conf')
+
+        elif opc == '20-radeon.conf':
+            file_remove = (f'{file_remove}20-redeon.conf && \n'
+                           f'{file_remove}20-intel-gpu.conf')
+
+        elif opc == '20-intel-gpu.conf':
+            file_remove = (f'{file_remove}20-redeon.conf && \n'
+                           f'{file_remove}20-amdgpu.conf')
+
+
+    elif opc == '0': cfg, file_copy, file_remove = '', '', ''
     else:
         Util.Continue(msg=True)
-        cfg, file_copy = f'{err} (Triple Buffer)\n\n', ''
+        cfg, file_copy, file_remove = f'{err} (Triple Buffer)\n\n', '', ''
+        
 
-    cfg = cfg + file_copy
+    cfg = cfg + file_copy + file_remove + ' ' + txt
 
 
     return cfg
