@@ -1,6 +1,10 @@
 import os, pathlib
 import Modulo_Util as Util
 
+
+
+
+
 fnl = 'txt'
 err = '# Configuración erronea'
 
@@ -162,6 +166,7 @@ def App(
         opc = '',
         txt = '',
         cfg_file = '',
+        cfg_dir = './Script_Preparar-OS_Apps/',
         apps = {
            'Essential' : [
                 'bleachbit',
@@ -221,10 +226,13 @@ def App(
         }
     ):
 
+
+    if pathlib.Path('Script_Preparar-OS_Apps').exists(): pass
+    else: os.mkdir('Script_Preparar-OS_Apps')
+
     cfg = '# Sin configurar\n\n'
     cfg_save = True
-    cfg_dir = './Script_Preparar-OS_Apps/'
-    txt_title = ''
+    txt_title = 'Applications / '
     txt_add = ''
     txt_fnl = ''
 
@@ -233,7 +241,7 @@ def App(
         opc == 'Dependence' or
         opc == 'Uninstall'
     ):
-        txt_title = 'Applications / ' + opc
+        txt_title += opc
         txt_add = apt(txt='install')
         cfg_file = f'App_{opc}.{fnl}'
         apps = apps[opc]
@@ -247,14 +255,22 @@ def App(
             txt_add = apt('purge')
 
 
-    elif opc == 'Desktop':
-        cfg_file_desktop = {
-            'xfce4' : f'App_{opc}-Xfce4.{fnl}',
-            'kdeplasma' : f'App_{opc}-KDE-Plasma.{fnl}',
-            'gnome3' : f'App_{opc}-Gnome3.{fnl}',
-            'lxde' : f'App_{opc}-LXDE.{fnl}',
-            'mate' : f'App_{opc}-Mate.{fnl}',
+    elif (
+        opc == 'Desktop' or
+        opc == 'xfce4' or
+        opc == 'kdeplasma' or
+        opc == 'gnome3' or
+        opc == 'lxde' or
+        opc == 'mate'
+    ):
+        cfg_dir += 'App_Desktop/'
 
+        cfg_file_desktop = {
+            'xfce4' :     f'App_{opc}-Xfce4.{fnl}',
+            'kdeplasma' : f'App_{opc}-KDE-Plasma.{fnl}',
+            'gnome3' :    f'App_{opc}-Gnome3.{fnl}',
+            'lxde' :      f'App_{opc}-LXDE.{fnl}',
+            'mate' :      f'App_{opc}-Mate.{fnl}',
         }
 
         apps = {
@@ -276,62 +292,76 @@ def App(
             ],
 
             'kdeplasma': [
-                'rofi',
-                ''
+                'rofi'                
             ],
 
             'gnome3': [
-                ''
+                'rofi'
             ],
 
             'lxde': [
-                ''
+                'rofi'
             ],
 
             'mate': [
-                ''
+                'rofi'
             ],
         }
 
         if (
-            pathlib.Path(cfg_file_desktop['xfce4']).exists() and
-            pathlib.Path(cfg_file_desktop['kdeplasma']).exists() and
-            pathlib.Path(cfg_file_desktop['gnome3']).exists() and
-            pathlib.Path(cfg_file_desktop['lxde']).exists() and
-            pathlib.Path(cfg_file_desktop['mate']).exists()
+            pathlib.Path(cfg_dir + cfg_file_desktop['xfce4']).exists() and
+            pathlib.Path(cfg_dir + cfg_file_desktop['kdeplasma']).exists() and
+            pathlib.Path(cfg_dir + cfg_file_desktop['gnome3']).exists() and
+            pathlib.Path(cfg_dir + cfg_file_desktop['lxde']).exists() and
+            pathlib.Path(cfg_dir + cfg_file_desktop['mate']).exists()
         ): pass
 
         else:
-            App(cfg_file = cfg_file_desktop['xfce4'],
-                apps = apps['xfce4'])
+            App(
+                cfg_file = cfg_file_desktop['xfce4'], cfg_dir = cfg_dir,
+                apps = apps['xfce4']
+            )
 
-            App(cfg_file = cfg_file_desktop['kdeplasma'],
-                apps = apps['kdeplasma'])
+            App(
+                cfg_file = cfg_file_desktop['kdeplasma'], cfg_dir = cfg_dir,
+                apps = apps['kdeplasma']
+            )
 
-            App(cfg_file = cfg_file_desktop['gnome3'],
-                apps = apps['gnome3'])
+            App(
+                cfg_file = cfg_file_desktop['gnome3'], cfg_dir = cfg_dir,
+                apps = apps['gnome3']
+            )
 
-            App(cfg_file = cfg_file_desktop['lxde'],
-                apps = apps['lxde'])
+            App(
+                cfg_file = cfg_file_desktop['lxde'], cfg_dir = cfg_dir,
+                apps = apps['lxde']
+            )
 
-            App(cfg_file = cfg_file_desktop['mate'],
-                apps = apps['mate'])
+            App(
+                cfg_file = cfg_file_desktop['mate'], cfg_dir = cfg_dir,
+                apps = apps['mate']
+            )
 
 
 
-        opc = input(Util.Title(txt='Aplicaciones para Escritorio', see=False) +
-            '1. Xfce4\n'
-            '2. KDE-Plasma\n'
-            '3. Gnome 3\n'
-            '4. LXDE\n'
-            '5. Mate\n'
-            'Elige una opción: ')
+        if opc == 'Desktop':
+            opc = input(
+                Util.Title(txt='Aplicaciones para Escritorio', see=False) +
+                '1. Xfce4\n'
+                '2. KDE-Plasma\n'
+                '3. Gnome 3\n'
+                '4. LXDE\n'
+                '5. Mate\n'
+                'Elige una opción: '
+            )
 
-        if opc == '1': opc = 'xfce4'
-        if opc == '2': opc = 'kdeplasma'
-        if opc == '3': opc = 'gnome3'
-        if opc == '4': opc = 'lxde'
-        if opc == '5': opc = 'mate'
+            if opc == '1': opc = 'xfce4'
+            if opc == '2': opc = 'kdeplasma'
+            if opc == '3': opc = 'gnome3'
+            if opc == '4': opc = 'lxde'
+            if opc == '5': opc = 'mate'
+            else: pass
+
         else: pass
 
         if (
@@ -340,10 +370,10 @@ def App(
             opc == 'gnome3' or
             opc == 'lxde' or
             opc == 'mate'
-       ):
-           cfg_file = cfg_file_desktop[opc]
-           txt_title = f'Aplicaciones / {opc}'
-           txt_add = apt(txt='install')
+        ):
+            cfg_file = cfg_file_desktop[opc]
+            txt_title += opc
+            txt_add = apt(txt='install')
 
 
         else: 
@@ -420,7 +450,7 @@ def App(
         ): 
             cfg_save = True
             cfg_file = f'App_Optional-{opc}.{fnl}'
-            txt_title = f'Optional / {opc}'
+            txt_title += f'Optional / {opc}'
             apps = apps[opc]
 
         elif opc == 'all':
@@ -451,6 +481,7 @@ def App(
         pathlib.Path(cfg_file).exists() or
         cfg_file == ''
     ): pass
+
 
     else:
         with open(cfg_file, "w") as file_cfg:
@@ -491,7 +522,7 @@ def App(
 
 def Repository(txt=''):
     file_source = f'Script_Preparar-OS_sources.{fnl}'
-    pth = '/etc/apt/'
+    path = '/etc/apt/'
 
     if pathlib.Path(file_source).exists(): pass
     else:
@@ -528,12 +559,12 @@ def Repository(txt=''):
 
 
 
-    if pathlib.Path(pth + 'sources.list').exists():
+    if pathlib.Path(path + 'sources.list').exists():
         cfg = (Util.Title(txt='Repositorios', see=False) +
-            f'sudo mv {pth}sources.list {pth}BackUp_sources.list &&\n'
-            f'sudo cp {file_source} {pth}sources.list {txt}')
+            f'sudo mv {path}sources.list {path}BackUp_sources.list &&\n'
+            f'sudo cp {file_source} {path}sources.list {txt}')
 
-    else: cfg = f'sudo cp {file_source} {pth}sources.list {txt}'
+    else: cfg = f'sudo cp {file_source} {path}sources.list {txt}'
 
 
     return cfg
