@@ -50,8 +50,9 @@ def Script_Menu():
                        Util.Title('Insalar Aplicaciones', see=False) +
                        '1. Apps Necesarias\n'
                        '2. Apps Dependencias\n'
-                       '3. Apps Escritorio\n'
-                       '4. Apps Opcionales\n'
+                       '3. Apps Desinstalar\n'
+                       '4. Apps Escritorio\n'
+                       '5. Apps Opcionales\n'
                        'Elige una opción: '
                    )
              
@@ -59,12 +60,14 @@ def Script_Menu():
                  opc == '1' or
                  opc == '2' or
                  opc == '3' or
-                 opc == '4'
+                 opc == '4' or
+                 opc == '5'
              ):
                  if opc == '1': opc = 'Essential'
                  if opc == '2': opc = 'Dependence'
-                 if opc == '3': opc = 'Desktop'
-                 if opc == '4': opc = 'Optional'
+                 if opc == '3': opc = 'Uninstall'
+                 if opc == '4': opc = 'Desktop'
+                 if opc == '5': opc = 'Optional'
 
                  Continue()
                  cfg = App(opc = opc)
@@ -102,15 +105,16 @@ def Script_Menu():
 
         if cfg_save == True:
             Util.CleanScreen()
-            opc = Util.Continue(cfg + '\n' + Util.Separator() +
-                                '\n¿Continuar?')
-            if opc == 's':
-                os.system(cfg)
-                with open(cfg_file, 'a') as file_cfg:
-                    file_cfg.write(cfg + f'\n#{Util.Separator(see=False)}\n')
-                input('Precione enter para continuar....')
-
-            else: pass
+            if cfg == '': pass
+            else:
+                opc = Util.Continue(cfg + '\n' + Util.Separator() +
+                                    '\n¿Continuar?')
+                if opc == 's':
+                    os.system(cfg)
+                    with open(cfg_file, 'a') as file_cfg:
+                        file_cfg.write(cfg + f'\n#{Util.Separator(see=False)}\n')
+                    input('Precione enter para continuar....')
+                else: pass
 
 
 
@@ -165,86 +169,212 @@ def System_apt():
 def App(
         opc = '',
         txt = '',
-        cfg_file = '',
-        cfg_dir = './Script_Preparar-OS_Apps/',
-        apps = {
-           'Essential' : [
-                'bleachbit',
-                'transmission',
-                'p7zip-full',
-                'eog',
-                'ffmpeg',
-                'scrcpy',
-                'adb',
-                'htop',
-                'neofetch',
-                'mpv',
-                'gdebi',
-                'mangohud',
-                'thunderbird',
-                'wget',
-                'openjfx',
-                'git',
-                'curl',
-                'youtube-dl',
-                'gnome-sound-recorder',
-                'libsdl2-mixer-2.0-0',
-                'cpu-x',
-                'ntp',
-                'gnome-disk-utility',
-                'fonts-noto-color-emoji',
-                'telegram-desktop',
-                '&& sudo systemctl enable ntp'
-            ],
-
-            'Dependence' : [
-                'gir1.2-libxfce4ui-2.0',
-                'gir1.2-libxfce4util-1.0',
-                'libc6:i386',
-                'libasound2:i386',
-                'libasound2-data:i386',
-                'libasound2-plugins:i386',
-                'libgtk2.0-0:i386',
-                'libxml2:i386',
-                'libsm6:i386',
-                'libqt5widgets5'
-            ],
-
-            'Uninstall' : [
-                'mozc-data',
-                'mozc-server',
-                'mlterm-common',
-                'xiterm+thai',
-                'fcitx-data',
-                'fcitx5-data',
-                'goldendict',
-                'uim',
-                'anthy',
-                'kasumi',
-                'audacious'
-            ]
-        }
     ):
 
+
+    apps = {
+       'Essential' : [
+            'bleachbit',
+            'transmission',
+            'p7zip-full',
+            'eog',
+            'ffmpeg',
+            'scrcpy',
+            'adb',
+            'htop',
+            'neofetch',
+            'mpv',
+            'gdebi',
+            'mangohud',
+            'thunderbird',
+            'wget',
+            'openjfx',
+            'git',
+            'curl',
+            'youtube-dl',
+            'gnome-sound-recorder',
+            'libsdl2-mixer-2.0-0',
+            'cpu-x',
+            'ntp',
+            'gnome-disk-utility',
+            'fonts-noto-color-emoji',
+            'telegram-desktop',
+            '&& sudo systemctl enable ntp'
+        ],
+
+        'Dependence' : [
+            'gir1.2-libxfce4ui-2.0',
+            'gir1.2-libxfce4util-1.0',
+            'libc6:i386',
+            'libasound2:i386',
+            'libasound2-data:i386',
+            'libasound2-plugins:i386',
+            'libgtk2.0-0:i386',
+            'libxml2:i386',
+            'libsm6:i386',
+            'libqt5widgets5'
+        ],
+
+        'Uninstall' : [
+            'mozc-data',
+            'mozc-server',
+            'mlterm-common',
+            'xiterm+thai',
+            'fcitx-data',
+            'fcitx5-data',
+            'goldendict',
+            'uim',
+            'anthy',
+            'kasumi',
+            'audacious'
+        ],
+
+
+        'Desktop-xfce4': [
+            'gnome-calculator', 
+            'eog',
+            'bijiben',
+            'gvfs-backends',
+            'gparted',
+            'menulibre',
+            'lightdm-gtk-greeter-settings',
+            'gnome-software',
+            'blueman',
+            'atril',
+            'file-roller',
+            'xfce4-goodies',
+            'telegram-desktop',
+            'redshift-gtk'
+        ],
+
+        'Desktop-kdeplasma': [
+            'rofi'                
+        ],
+
+        'Desktop-gnome3': [
+            'rofi'
+        ],
+
+        'Desktop-lxde': [
+            'rofi'
+        ],
+
+        'Desktop-mate': [
+            'rofi'
+        ],
+
+        'Optional-flatpak': [
+            f'{apt(txt="install")} flatpak &&\n'
+        
+            'sudo flatpak remote-add --if-not-exists flathub '
+            'https://flathub.org/repo/flathub.flatpakrepo &&\n'
+
+            f'{apt(txt="install")} gnome-software-plugin-flatpak'
+        ],
+
+        'Optional-wine': [
+            'sudo dpkg --add-architecture i386 && clear &&\n'
+
+            'sudo wget -nc -O /usr/share/keyrings/winehq-archive.key '
+            'https://dl.winehq.org/wine-builds/winehq.key &&\n'
+
+            'clear &&\n'
+
+            'sudo wget -nc -P /etc/apt/sources.list.d/ '
+            'https://dl.winehq.org/wine-builds/debian/dists/bullseye/'
+            'winehq-bullseye.sources &&\n'
+
+            f'{apt(txt="update")} && clear &&\n'
+
+            f'{apt(txt="install")} '
+            '--install-recommends winehq-stable && clear &&\n'
+
+            'wine --version'
+        ],
+
+        'Optional-woeusb-ng': [
+            f'{apt(txt="install")} '
+            'git p7zip-full python3-pip python3-wxgtk4.0 grub2-common '
+            'grub-pc-bin && sudo pip3 install WoeUSB-ng'
+        ]                
+    }
 
     if pathlib.Path('Script_Preparar-OS_Apps').exists(): pass
     else: os.mkdir('Script_Preparar-OS_Apps')
 
     cfg = '# Sin configurar\n\n'
     cfg_save = True
+    cfg_file = ''
+    cfg_dir = './Script_Preparar-OS_Apps/'
     txt_title = 'Applications / '
-    txt_add = ''
+    txt_add = apt('install')
     txt_fnl = ''
+
+    if (
+        opc == 'Desktop' or
+        opc == 'Optional'
+    ):
+        if opc == 'Desktop':
+            opc = input(
+                Util.Title(f'{txt_title}{opc}', see = False) +
+                '1. Xfce 4\n'
+                '2. KDE Plasma\n'
+                '3. Gnome 3\n'
+                '4. LXDE\n'
+                '5. Mate\n'
+                'Elige una opcion: '
+            )
+        
+
+            if opc == '1': opc = 'Desktop-xfce4'
+            elif opc == '2': opc = 'Desktop-kdeplasma'
+            elif opc == '3': opc = 'Desktop-gnome3'
+            elif opc == '4': opc = 'Desktop-lxde'
+            elif opc == '5': opc = 'Desktop-mate'
+
+        elif opc == 'Optional':
+            opc = input(
+                Util.Title(f'{txt_title}{opc}', see = False) +
+                '1. Wine HQ\n'
+                '2. Flatpak\n'
+                '3. WoeUSB NG\n'
+                'Elige una opcion: '
+            )
+            if opc == '1': opc = 'Optional-wine'
+            elif opc == '2': opc = 'Optional-flatpak'
+            elif opc == '3': opc = 'Optional-woeusb-ng'
+
+        if (
+            opc == 'Desktop-xfce4' or
+            opc == 'Desktop-kdeplasma' or
+            opc == 'Desktop-gnome3' or
+            opc == 'Desktop-lxde' or
+            opc == 'Desktop-mate' or
+            opc == 'Optional-wine' or
+            opc == 'Optional-flatpak' or
+            opc == 'Optional-woeusb-ng'
+        ): pass
+
 
     if (
         opc == 'Essential' or
         opc == 'Dependence' or
-        opc == 'Uninstall'
+        opc == 'Uninstall' or
+
+        opc == 'Desktop-xfce4' or
+        opc == 'Desktop-kdeplasma' or
+        opc == 'Desktop-gnome3' or
+        opc == 'Desktop-lxde' or
+        opc == 'Desktop-mate' or
+
+        opc == 'Optional-wine' or
+        opc == 'Optional-flatpak' or
+        opc == 'Optional-woeusb-ng'
     ):
         txt_title += opc
-        txt_add = apt(txt='install')
         cfg_file = f'App_{opc}.{fnl}'
         apps = apps[opc]
+
 
         if opc == 'Dependence':
             txt_add = (
@@ -255,220 +385,26 @@ def App(
             txt_add = apt('purge')
 
 
-    elif (
-        opc == 'Desktop' or
-        opc == 'xfce4' or
-        opc == 'kdeplasma' or
-        opc == 'gnome3' or
-        opc == 'lxde' or
-        opc == 'mate'
-    ):
-        cfg_dir += 'App_Desktop/'
-
-        cfg_file_desktop = {
-            'xfce4' :     f'App_{opc}-Xfce4.{fnl}',
-            'kdeplasma' : f'App_{opc}-KDE-Plasma.{fnl}',
-            'gnome3' :    f'App_{opc}-Gnome3.{fnl}',
-            'lxde' :      f'App_{opc}-LXDE.{fnl}',
-            'mate' :      f'App_{opc}-Mate.{fnl}',
-        }
-
-        apps = {
-            'xfce4': [
-                'gnome-calculator', 
-                'eog',
-                'bijiben',
-                'gvfs-backends',
-                'gparted',
-                'menulibre',
-                'lightdm-gtk-greeter-settings',
-                'gnome-software',
-                'blueman',
-                'atril',
-                'file-roller',
-                'xfce4-goodies',
-                'telegram-desktop',
-                'redshift-gtk'
-            ],
-
-            'kdeplasma': [
-                'rofi'                
-            ],
-
-            'gnome3': [
-                'rofi'
-            ],
-
-            'lxde': [
-                'rofi'
-            ],
-
-            'mate': [
-                'rofi'
-            ],
-        }
-
-        if (
-            pathlib.Path(cfg_dir + cfg_file_desktop['xfce4']).exists() and
-            pathlib.Path(cfg_dir + cfg_file_desktop['kdeplasma']).exists() and
-            pathlib.Path(cfg_dir + cfg_file_desktop['gnome3']).exists() and
-            pathlib.Path(cfg_dir + cfg_file_desktop['lxde']).exists() and
-            pathlib.Path(cfg_dir + cfg_file_desktop['mate']).exists()
-        ): pass
-
-        else:
-            App(
-                cfg_file = cfg_file_desktop['xfce4'], cfg_dir = cfg_dir,
-                apps = apps['xfce4']
-            )
-
-            App(
-                cfg_file = cfg_file_desktop['kdeplasma'], cfg_dir = cfg_dir,
-                apps = apps['kdeplasma']
-            )
-
-            App(
-                cfg_file = cfg_file_desktop['gnome3'], cfg_dir = cfg_dir,
-                apps = apps['gnome3']
-            )
-
-            App(
-                cfg_file = cfg_file_desktop['lxde'], cfg_dir = cfg_dir,
-                apps = apps['lxde']
-            )
-
-            App(
-                cfg_file = cfg_file_desktop['mate'], cfg_dir = cfg_dir,
-                apps = apps['mate']
-            )
-
-
-
-        if opc == 'Desktop':
-            opc = input(
-                Util.Title(txt='Aplicaciones para Escritorio', see=False) +
-                '1. Xfce4\n'
-                '2. KDE-Plasma\n'
-                '3. Gnome 3\n'
-                '4. LXDE\n'
-                '5. Mate\n'
-                'Elige una opción: '
-            )
-
-            if opc == '1': opc = 'xfce4'
-            if opc == '2': opc = 'kdeplasma'
-            if opc == '3': opc = 'gnome3'
-            if opc == '4': opc = 'lxde'
-            if opc == '5': opc = 'mate'
-            else: pass
-
-        else: pass
-
-        if (
-            opc == 'xfce4' or
-            opc == 'kdeplasma' or
-            opc == 'gnome3' or
-            opc == 'lxde' or
-            opc == 'mate'
+        elif (
+            opc == 'Desktop-xfce4' or
+            opc == 'Desktop-kdeplasma' or
+            opc == 'Desktop-gnome3' or
+            opc == 'Desktop-lxde' or
+            opc == 'Desktop-mate'
         ):
-            cfg_file = cfg_file_desktop[opc]
-            txt_title += opc
-            txt_add = apt(txt='install')
+            cfg_dir += f'App_Desktop/'
 
 
-        else: 
-            cfg_save = False
-            cfg = 'Aplicaciones de escritorio'
+        elif (
+            opc == 'Optional-wine' or
+            opc == 'Optional-flatpak' or
+            opc == 'Optional-woeusb-ng'
+        ):
+            cfg_dir += f'App_Optional/'
+            txt_add = ''
 
 
-    elif (
-        opc == 'Optional' or
-        opc == 'flatpak' or
-        opc == 'wine' or
-        opc == 'woeusb-ng'
-    ):
-        cfg = ''
-        cfg_save = None
-
-        apps = {
-            'flatpak': [
-                f'{apt(txt="install")} flatpak &&\n'
-        
-                'sudo flatpak remote-add --if-not-exists flathub '
-                'https://flathub.org/repo/flathub.flatpakrepo &&\n'
-
-                f'{apt(txt="install")} gnome-software-plugin-flatpak'
-            ],
-
-            'wine': [
-                'sudo dpkg --add-architecture i386 && clear &&\n'
-
-                'sudo wget -nc -O /usr/share/keyrings/winehq-archive.key '
-                'https://dl.winehq.org/wine-builds/winehq.key &&\n'
-
-                'clear &&\n'
-
-                'sudo wget -nc -P /etc/apt/sources.list.d/ '
-                'https://dl.winehq.org/wine-builds/debian/dists/bullseye/'
-                'winehq-bullseye.sources &&\n'
-
-                f'{apt(txt="update")} && clear &&\n'
-
-                f'{apt(txt="install")} '
-                '--install-recommends winehq-stable && clear &&\n'
-
-                'wine --version'
-            ],
-
-            'woeusb-ng': [
-                f'{apt(txt="install")} '
-                'git p7zip-full python3-pip python3-wxgtk4.0 grub2-common '
-                'grub-pc-bin && sudo pip3 install WoeUSB-ng'
-            ]
-        }
-
-        if opc == 'Optional':
-            opc = input(Util.Title(txt='Aplicaciones opcionales', see=False) +
-                '0. Sin apps opcionales\n'
-                '1. FlatPak\n'
-                '2. Wine\n'
-                '3. WoeUSB-NG\n'
-                '9. Todos\n'
-                'Elige una opción: ')
-            if opc == '0': opc = None
-            elif opc == '1': opc = 'flatpak'
-            elif opc == '2': opc = 'wine'
-            elif opc == '3': opc = 'woeusb-ng'
-            elif opc == '9': opc = 'all'
-            else: opc = ''
-        else: pass
-
-        if (
-            opc == 'flatpak' or
-            opc == 'wine' or
-            opc == 'woeusb-ng'
-        ): 
-            cfg_save = True
-            cfg_file = f'App_Optional-{opc}.{fnl}'
-            txt_title += f'Optional / {opc}'
-            apps = apps[opc]
-
-        elif opc == 'all':
-            cfg = (
-                App(txt='&&\n\n', opc = 'flatpak') +
-                App(txt='&&\n\n', opc = 'wine') +
-                App(txt='&&\n\n', opc = 'woeusb-ng')
-            )
-
-        elif opc == None:
-            cfg, txt = '', ''
-
-        else:
-            cfg_save = False
-            cfg = 'Aplicaciones opcionales'
-
-
-    else: cfg_save = None
+    else: cfg_save, cfg = False, 'Aplicaciones'
 
 
     if cfg_file == '': pass
@@ -510,7 +446,7 @@ def App(
         cfg = f'{err} ({cfg})\n\n'
         Util.Continue(msg=True)
 
-    else: pass #txt_add, cfg = '', ''
+    else: pass
 
     Util.CleanScreen()
 
