@@ -1,7 +1,0 @@
-sudo dpkg --add-architecture i386 && clear &&
-sudo wget -nc -O /usr/share/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key &&
-clear &&
-sudo wget -nc -P /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bullseye/winehq-bullseye.sources &&
-sudo apt update && sudo apt upgrade && clear &&
-sudo apt install --install-recommends winehq-stable && clear &&
-wine --version
