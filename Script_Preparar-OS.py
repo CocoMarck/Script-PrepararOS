@@ -16,7 +16,7 @@ def Script_Menu():
         Util.CleanScreen()
         opc = input(Util.Title(txt='Preparar sistema', see=False) +
             '1. Automatico\n'
-            '2. Instalar Apliciones\n'
+            '2. Aplicaciones\n'
             '3. Aptitude\n'
             '4. Repositorios no libres\n'
             '5. Activar Triple buffer\n'
@@ -47,12 +47,12 @@ def Script_Menu():
 
         elif opc == '2':
              opc = input(
-                       Util.Title('Insalar Aplicaciones', see=False) +
-                       '1. Apps Necesarias\n'
-                       '2. Apps Dependencias\n'
-                       '3. Apps Desinstalar\n'
-                       '4. Apps Escritorio\n'
-                       '5. Apps Opcionales\n'
+                       Util.Title('Aplicaciones', see=False) +
+                       '1. Necesarias\n'
+                       '2. Dependencias\n'
+                       '3. Desinstalar\n'
+                       '4. Escritorio\n'
+                       '5. Opcionales\n'
                        'Elige una opción: '
                    )
              
@@ -76,14 +76,11 @@ def Script_Menu():
                  Util.Continue(msg=True)
                  cfg_save = False
 
-        elif opc == '3':
-            cfg = System_apt()
+        elif opc == '3': cfg = System_apt()
 
-        elif opc == '4':
-            cfg = Repository()
+        elif opc == '4': cfg = Repository()
 
-        elif opc == '5':
-            cfg = TripleBuffer()
+        elif opc == '5': cfg = TripleBuffer()
 
         elif opc == '9':
             cfg_save = False
@@ -93,9 +90,8 @@ def Script_Menu():
                     input(f'{reader}\n\nPreciona enter para continuar...')
 
         elif opc == '0':
-            cfg_save = False
+            cfg_save, loop = False, False
             print('Hasta la proxima...')
-            exit()
 
         else:
             cfg_save = False
@@ -331,6 +327,7 @@ def App(
             elif opc == '3': opc = 'Desktop-gnome3'
             elif opc == '4': opc = 'Desktop-lxde'
             elif opc == '5': opc = 'Desktop-mate'
+            else: opc = 'Escritorio'
 
         elif opc == 'Optional':
             opc = input(
@@ -338,11 +335,20 @@ def App(
                 '1. Wine HQ\n'
                 '2. Flatpak\n'
                 '3. WoeUSB NG\n'
+                '9. Todas las Aplicaciones\n'
                 'Elige una opcion: '
             )
             if opc == '1': opc = 'Optional-wine'
             elif opc == '2': opc = 'Optional-flatpak'
             elif opc == '3': opc = 'Optional-woeusb-ng'
+            elif opc == '9':
+                opc = None
+                cfg = (
+                    App('Optional-wine', '&&\n\n') +
+                    App('Optional-flatpak','&&\n\n') +
+                    App('Optional-woeusb-ng') + txt
+                )
+            else: opc = 'Opcionales'
 
         if (
             opc == 'Desktop-xfce4' or
@@ -403,8 +409,9 @@ def App(
             cfg_dir += f'App_Optional/'
             txt_add = ''
 
+    elif opc == None: cfg_save = None
 
-    else: cfg_save, cfg = False, 'Aplicaciones'
+    else: cfg_save, cfg = False, f'Aplicaciones / {opc}'
 
 
     if cfg_file == '': pass
@@ -570,7 +577,7 @@ def TripleBuffer(txt=''):
             file_remove = (f'{file_remove}20-amdgpu.conf && \n'
                            f'{file_remove}20-intel-gpu.conf')
 
-        elif opc == '20-radeon.conf':
+        elif opc == '20-amdgpu.conf':
             file_remove = (f'{file_remove}20-redeon.conf && \n'
                            f'{file_remove}20-intel-gpu.conf')
 
