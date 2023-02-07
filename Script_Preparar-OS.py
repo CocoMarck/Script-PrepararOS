@@ -1,5 +1,6 @@
 import os, pathlib
 import Modulo_Util as Util
+from glob import glob
 
 
 
@@ -41,8 +42,7 @@ def Script_Menu():
                 apt('update') + ' &&\n\n' +
                 App('Essential', '&&\n\n') + App('Dependence','&&\n\n') +
                 App('Desktop','&&\n\n') + App('Optional','&&\n\n') +
-                App('Uninstall', '&&\n\n') + apt('clean') + ' &&\n\n' +
-                TripleBuffer()
+                App('Uninstall', '&&\n\n') + apt('clean')
             )
 
         elif opc == '2':
@@ -64,10 +64,10 @@ def Script_Menu():
                  opc == '5'
              ):
                  if opc == '1': opc = 'Essential'
-                 if opc == '2': opc = 'Dependence'
-                 if opc == '3': opc = 'Uninstall'
-                 if opc == '4': opc = 'Desktop'
-                 if opc == '5': opc = 'Optional'
+                 elif opc == '2': opc = 'Dependence'
+                 elif opc == '3': opc = 'Uninstall'
+                 elif opc == '4': opc = 'Desktop'
+                 elif opc == '5': opc = 'Optional'
 
                  Continue()
                  cfg = App(opc = opc)
@@ -165,6 +165,11 @@ def System_apt():
 def App(
         opc = '',
         txt = '',
+        cfg_save = True,
+        cfg_file = '',
+        cfg_dir = './Script_Preparar-OS_Apps/',
+        txt_title = 'Applications / ',
+        txt_add = apt('install'),
     ):
 
 
@@ -260,50 +265,22 @@ def App(
         ],
 
         'Optional-flatpak': [
-            f'{apt(txt="install")} flatpak &&\n'
-        
-            'sudo flatpak remote-add --if-not-exists flathub '
-            'https://flathub.org/repo/flathub.flatpakrepo &&\n'
-
-            f'{apt(txt="install")} gnome-software-plugin-flatpak'
+            '# Instalacion de Flatpak'
         ],
 
         'Optional-wine': [
-            'sudo dpkg --add-architecture i386 && clear &&\n'
-
-            'sudo wget -nc -O /usr/share/keyrings/winehq-archive.key '
-            'https://dl.winehq.org/wine-builds/winehq.key &&\n'
-
-            'clear &&\n'
-
-            'sudo wget -nc -P /etc/apt/sources.list.d/ '
-            'https://dl.winehq.org/wine-builds/debian/dists/bullseye/'
-            'winehq-bullseye.sources &&\n'
-
-            f'{apt(txt="update")} && clear &&\n'
-
-            f'{apt(txt="install")} '
-            '--install-recommends winehq-stable && clear &&\n'
-
-            'wine --version'
+            '# Instalacion de WineHQ'
         ],
 
         'Optional-woeusb-ng': [
-            f'{apt(txt="install")} '
-            'git p7zip-full python3-pip python3-wxgtk4.0 grub2-common '
-            'grub-pc-bin && sudo pip3 install WoeUSB-ng'
+            '# Instalacion de WoeUSB NG'
         ]                
     }
 
     if pathlib.Path('Script_Preparar-OS_Apps').exists(): pass
     else: os.mkdir('Script_Preparar-OS_Apps')
 
-    cfg = '# Sin configurar\n\n'
-    cfg_save = True
-    cfg_file = ''
-    cfg_dir = './Script_Preparar-OS_Apps/'
-    txt_title = 'Applications / '
-    txt_add = apt('install')
+    cfg = ''
     txt_fnl = ''
 
     if (
@@ -330,53 +307,72 @@ def App(
             else: opc = 'Escritorio'
 
         elif opc == 'Optional':
-            opc = input(
-                Util.Title(f'{txt_title}{opc}', see = False) +
-                '1. Wine HQ\n'
-                '2. Flatpak\n'
-                '3. WoeUSB NG\n'
-                '9. Todas las Aplicaciones\n'
-                'Elige una opcion: '
-            )
-            if opc == '1': opc = 'Optional-wine'
-            elif opc == '2': opc = 'Optional-flatpak'
-            elif opc == '3': opc = 'Optional-woeusb-ng'
-            elif opc == '9':
-                opc = None
-                cfg = (
-                    App('Optional-wine', '&&\n\n') +
-                    App('Optional-flatpak','&&\n\n') +
-                    App('Optional-woeusb-ng') + txt
+            if (
+                pathlib.Path(f'{cfg_dir}/App_Optional/'
+                             'App_Optional-wine.txt').exists() or
+
+                pathlib.Path(f'{cfg_dir}/App_Optional/'
+                             'App_Optional-flatpak.txt').exists() or
+
+                pathlib.Path(f'{cfg_dir}/App_Optional/'
+                             'App_Optional-woeusb-ng.txt').exists()
+            ): pass
+            else:
+                opc = 'continue'
+                App('Optional-wine')
+                App('Optional-flatpak')
+                App('Optional-woeusb-ng')
+                cfg_save = False
+        
+            try:
+                archives = (
+                    sorted(pathlib.Path(f'{cfg_dir}/App_Optional')
+                    .glob('App_Optional-*.txt'))
                 )
-            else: opc = 'Opcionales'
+                arch_dic = {}
+                arch_menu = ''
+                nmr = 0
+                for arch in archives:
+                    nmr += 1
+                    arch_menu += f'{nmr}. {arch}\n'
+                    arch_dic.update({nmr : arch})
+                
+                opc = int(input(
+                    Util.Title(f'{txt_title}{opc}', see = False) +
+                    arch_menu +
+                    f'{nmr+1}. Todas las Aplicaciones\n'
+                    'Elige una opcion: '
+                ))
+                if opc in arch_dic:
+                    txt_title += 'Optional'
+                    txt_add = ''
+                    cfg_dir = './'
+                    cfg_file = str(arch_dic[opc])
+                    # cfg_save = True
+                    opc = 'continue'
+                    
+                elif opc == nmr + 1:
+                    while nmr > 0:
+                        cfg += (
+                            App('continue', '&&\n\n', True,
+                                str(arch_dic[nmr]), './',
+                                f'{txt_title}Optional ALL', '')
+                        )
+                        nmr -= 1
+                    cfg += 'echo Fin de Apps Opcionales ' + txt
+                    opc = None
+                    
+                    
+                else: opc = 'Opcionales'
+                
+            except:
+                opc = None
+                input(f'Tienes que poner un numero...\n')
 
-        if (
-            opc == 'Desktop-xfce4' or
-            opc == 'Desktop-kdeplasma' or
-            opc == 'Desktop-gnome3' or
-            opc == 'Desktop-lxde' or
-            opc == 'Desktop-mate' or
-            opc == 'Optional-wine' or
-            opc == 'Optional-flatpak' or
-            opc == 'Optional-woeusb-ng'
-        ): pass
+        elif opc in apps: pass
 
 
-    if (
-        opc == 'Essential' or
-        opc == 'Dependence' or
-        opc == 'Uninstall' or
-
-        opc == 'Desktop-xfce4' or
-        opc == 'Desktop-kdeplasma' or
-        opc == 'Desktop-gnome3' or
-        opc == 'Desktop-lxde' or
-        opc == 'Desktop-mate' or
-
-        opc == 'Optional-wine' or
-        opc == 'Optional-flatpak' or
-        opc == 'Optional-woeusb-ng'
-    ):
+    if opc in apps:
         txt_title += opc
         cfg_file = f'App_{opc}.{fnl}'
         apps = apps[opc]
@@ -384,7 +380,7 @@ def App(
 
         if opc == 'Dependence':
             txt_add = (
-                f'sudo dpkg --add-architecture i386 {txt}' + apt('install')
+                f'sudo dpkg --add-architecture i386 &&\n\n' + apt('install')
             )
 
         elif opc == 'Uninstall':
@@ -408,6 +404,8 @@ def App(
         ):
             cfg_dir += f'App_Optional/'
             txt_add = ''
+            
+    elif opc == 'continue': pass
 
     elif opc == None: cfg_save = None
 
