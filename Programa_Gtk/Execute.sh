@@ -1,1 +1,2 @@
-python3 Programa_Gtk.py
+clear
+python3 Script_Preparar-OS_Gtk.py
