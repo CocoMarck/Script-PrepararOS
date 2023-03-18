@@ -48,19 +48,23 @@ class Dialog_TextView(Gtk.Dialog):
 class Dialog_Command_Run(Gtk.Dialog):
     def __init__(self, parent, cfg='', txt='Ejecutar Comando'):
         super().__init__(title='Command Run', transient_for=parent, flags=0)
-        self.set_default_size(256, 128)
+        self.set_default_size(512, 256)
         self.cfg = cfg
+        
+        title_HeaderBar = Gtk.HeaderBar()
+        title_HeaderBar.set_show_close_button(True)
+        title_HeaderBar.props.title = 'Comando'
+        self.set_titlebar(title_HeaderBar)
         
         box_v = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         #box_v.set_homogeneous(False)
         #box_v.set_property("expand", True)
         #box_v.set_property("halign", Gtk.Align.CENTER)
         
-        label = Gtk.Label()
-        label.set_markup(f'<b>Comando</b>')
-        #label.set_justify(Gtk.Justification.CENTER)
-        label.set_line_wrap(True)
-        box_v.pack_start(label, False, False, 16)
+        #label = Gtk.Label()
+        #label.set_markup(f'<b>Comando</b>')
+        #label.set_line_wrap(True)
+        #box_v.pack_start(label, False, False, 16)
         
         # Zona donde se ve el comando
         cmd_scroll = Gtk.ScrolledWindow()
