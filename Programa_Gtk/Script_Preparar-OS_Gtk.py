@@ -69,6 +69,9 @@ class Window_Main(Gtk.Window):
         
     def evt_automatic(self, widget):
         print('Preparación automatica')
+        dialog = Dialog_Automatic(self)
+        dialog.run()
+        dialog.destroy()
         
     def evt_application(self, widget):
         print('Instalar Aplicaciones')
@@ -102,6 +105,47 @@ class Window_Main(Gtk.Window):
         
     def evt_exit(self, widget):
         print('Hasta la proxima...')
+        self.destroy()
+        
+
+class Dialog_Automatic(Gtk.Dialog):
+    def __init__(self, parent):
+        super().__init__(title='Dialog Automatic', transient_for=parent, flags=0)
+        self.set_default_size(256, -1)
+        #self.set_resizable(False)
+        
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        vbox.set_property("expand", True)
+        
+        label_title = Gtk.Label()
+        label_title.set_markup('<b>Automatico</b>')
+        vbox.pack_start(label_title, True, True, 0)
+        
+        # Seccion Final Iniciar y Salir
+        hbox = Gtk.Box(spacing=64)
+        vbox.pack_end(hbox, False, True, 0)
+        
+        button_automatic = Gtk.Button(label='Iniciar')
+        button_automatic.connect('clicked', self.evt_automatic)
+        hbox.pack_start(button_automatic, False, True, 0)
+        
+        button_exit = Gtk.Button(label='Salir')
+        button_exit.connect('clicked', self.evt_exit)
+        hbox.pack_end(button_exit, False, True, 0)
+        
+        self.get_content_area().add(vbox)
+        self.show_all()
+        
+    def evt_automatic(self, widget):
+        Config_Save(
+            Util_Debian.Aptitude('update') + ' &&\n\n' +
+            Util_Debian.App('Essential', '&&\n\n') +
+            Util_Debian.App('Dependence', '&&\n\n') +
+            Util_Debian.App('Uninstall', '&&\n\n') +
+            Util_Debian.Aptitude('clean')
+        )
+        
+    def evt_exit(self, widget):
         self.destroy()
         
 
@@ -146,6 +190,7 @@ class Dialog_Aptitude(Gtk.Dialog):
         
     def evt_exit(self, widget):
         self.destroy()
+
 
 class Dialog_TripleBuffer(Gtk.Dialog):
     def __init__(self, parent):
@@ -264,16 +309,12 @@ class Dialog_Application_Menu(Gtk.Dialog):
         )
         
     def evt_App_Desktop(self, widget):
-        Config_Save(
-            Util_Debian.App(opc='Desktop-xfce4', txt='&&\n\n') +
-            Util_Debian.App(opc='Desktop-kdeplasma', txt='&&\n\n') +
-            Util_Debian.App(opc='Desktop-gnome3', txt='&&\n\n') +
-            Util_Debian.App(opc='Desktop-lxde', txt='&&\n\n') +
-            Util_Debian.App(opc='Desktop-mate', txt='&&\n\n')
-        )
+        dialog = Dialog_Application_Desktop(self)
+        dialog.run()
+        dialog.destroy()
         
     def evt_App_Optional(self, widget):
-        dialog = Dialog_ApplicationOptional(self)
+        dialog = Dialog_Application_Optional(self)
         dialog.run()
         dialog.destroy()
         
@@ -281,10 +322,61 @@ class Dialog_Application_Menu(Gtk.Dialog):
         self.destroy()
 
 
-class Dialog_ApplicationOptional(Gtk.Dialog):
+class Dialog_Application_Desktop(Gtk.Dialog):
     def __init__(self, parent):
         super().__init__(
-            title='Application Optional', transient_for=parent, flags=0
+            title='Dialog App Desktop', transient_for=parent, flags=0
+        )
+        self.set_default_size(256, -1)
+        self.set_resizable(False)
+        
+        HeaderBar_title = Gtk.HeaderBar()
+        HeaderBar_title.set_show_close_button(True)
+        HeaderBar_title.props.title = 'Aplicaciones Escritorio'
+        self.set_titlebar(HeaderBar_title)
+        
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        
+        button_app_desktop = Gtk.Button(label='Desktop-xfce4')
+        button_app_desktop.connect('clicked', self.evt_app_desktop)
+        vbox.pack_start(button_app_desktop, True, True, 0)
+        
+        button_app_desktop = Gtk.Button(label='Desktop-kdeplasma')
+        button_app_desktop.connect('clicked', self.evt_app_desktop)
+        vbox.pack_start(button_app_desktop, True, True, 0)
+        
+        button_app_desktop = Gtk.Button(label='Desktop-gnome3')
+        button_app_desktop.connect('clicked', self.evt_app_desktop)
+        vbox.pack_start(button_app_desktop, True, True, 0)
+        
+        button_app_desktop = Gtk.Button(label='Desktop-lxde')
+        button_app_desktop.connect('clicked', self.evt_app_desktop)
+        vbox.pack_start(button_app_desktop, True, True, 0)
+        
+        button_app_desktop = Gtk.Button(label='Desktop-mate')
+        button_app_desktop.connect('clicked', self.evt_app_desktop)
+        vbox.pack_start(button_app_desktop, True, True, 0)
+        
+        button_exit = Gtk.Button(label='Salir')
+        button_exit.connect('clicked', self.evt_exit)
+        vbox.pack_end(button_exit, True, False, 16)
+        
+        self.get_content_area().add(vbox)
+        self.show_all()
+        
+    def evt_app_desktop(self, button):
+        Config_Save(
+            Util_Debian.App( button.get_label() )
+        )
+        
+    def evt_exit(self, widget):
+        self.destroy()
+
+
+class Dialog_Application_Optional(Gtk.Dialog):
+    def __init__(self, parent):
+        super().__init__(
+            title='Dialog App Optional', transient_for=parent, flags=0
         )
         #Metodo 1 self.fullscreen()
         #Metodo 2 display = Gdk.Screen.get_default()
