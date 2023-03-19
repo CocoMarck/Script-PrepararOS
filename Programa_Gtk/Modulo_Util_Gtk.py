@@ -49,11 +49,7 @@ class Dialog_Command_Run(Gtk.Dialog):
     def __init__(self, parent, cfg='', txt='Ejecutar Comando'):
         super().__init__(title='Command Run', transient_for=parent, flags=0)
         self.set_default_size(512, 256)
-        self.cfg = (
-            cfg + ' &&\n\n' +
-            Util.Title('Pause', see=False) +
-            'read -rsp $"Press ENTER..." -n 1 key'
-        )
+        self.cfg = cfg
         
         title_HeaderBar = Gtk.HeaderBar()
         title_HeaderBar.set_show_close_button(True)

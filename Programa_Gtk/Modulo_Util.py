@@ -242,6 +242,12 @@ def Command_Run(cmd='dir'):
         txt = Text_Read('Modulo_Util_Linux.dat', 'ModeText')
         smb = "'"
         
+        cmd = (
+            cmd + ' &&\n\n' +
+            Title('Pause', see=False) +
+            'read -rsp $"Press ENTER..." -n 1 key'
+        )
+        cmd = cmd.replace("'", '"')
     
     line_go = []
     for line in txt.split('\n'):
@@ -249,7 +255,7 @@ def Command_Run(cmd='dir'):
             line_go.append(line)
         
     txt = ('\n'.join(line_go)).replace('\n', ' ')
-        
+    
     print(f'{txt} {smb}{cmd}{smb}')
     os.system(f'{txt} {smb}{cmd}{smb}')
     #print(f'{txt} execute {cmd}')

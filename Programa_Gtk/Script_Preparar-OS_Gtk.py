@@ -11,6 +11,7 @@ from gi.repository import Gtk
 
 
 cfg_file = f'Script_Preparar-OS_CFG.txt'
+cfg_dir = './Script_Preparar-OS_Apps/'
 
 def Config_Save(cfg=''):
     if cfg == '':
@@ -24,6 +25,23 @@ def Config_Save(cfg=''):
         with open(cfg_file, 'a') as file_cfg:
                 file_cfg.write(cfg + f'\n#{Util.Separator(see=False)}\n')
 
+        # Metodo 2
+        #dialog = Gtk.MessageDialog(
+        #    transient_for=None,
+        #    flags=0,
+        #    message_type=Gtk.MessageType.QUESTION,
+        #    buttons=Gtk.ButtonsType.YES_NO,
+        #    text='¿Confirmar comando?'
+        #)
+        #dialog.format_secondary_text(cfg)
+        #response = dialog.run()
+        #if response == Gtk.ResponseType.YES:
+        #    Util.Command_Run(cfg)
+        #    with open(cfg_file, 'a') as file_cfg:
+        #            file_cfg.write(cfg + f'\n#{Util.Separator(see=False)}\n')
+        #elif response == Gtk.ResponseType.NO:
+        #    pass
+        #dialog.destroy()
 
 class Window_Main(Gtk.Window):
     def __init__(self):
@@ -111,8 +129,8 @@ class Window_Main(Gtk.Window):
 class Dialog_Automatic(Gtk.Dialog):
     def __init__(self, parent):
         super().__init__(title='Dialog Automatic', transient_for=parent, flags=0)
-        self.set_default_size(256, -1)
-        #self.set_resizable(False)
+        self.set_default_size(512, -1)
+        self.set_resizable(False)
         
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         vbox.set_property("expand", True)
@@ -120,6 +138,82 @@ class Dialog_Automatic(Gtk.Dialog):
         label_title = Gtk.Label()
         label_title.set_markup('<b>Automatico</b>')
         vbox.pack_start(label_title, True, True, 0)
+        
+        
+        # Seccion 1 Apps Desktop
+        hbox_app_desktop = Gtk.Box(spacing=0)
+        vbox.pack_start(hbox_app_desktop, True, True, 0)
+        
+        self.CheckButton_app_desktop = Gtk.CheckButton(label='App Desktop')
+        #self.CheckButton_app_desktop.set_active(True)
+        hbox_app_desktop.pack_start(
+            self.CheckButton_app_desktop, True, True, 0
+        )
+        
+        liststore_app_desktop = Gtk.ListStore(str)
+        app_desktop = [
+            'Desktop-xfce4',
+            'Desktop-kdeplasma',
+            'Desktop-gnome3',
+            'Desktop-lxde',
+            'Desktop-mate',
+        ]
+        for app in app_desktop:
+            liststore_app_desktop.append([app])
+            
+        self.ComboBox_app_desktop = (
+            Gtk.ComboBox.new_with_model(liststore_app_desktop)
+        )
+        CellRendererText_app_desktop = Gtk.CellRendererText()
+        self.ComboBox_app_desktop.pack_start(CellRendererText_app_desktop, True)
+        self.ComboBox_app_desktop.add_attribute(
+            CellRendererText_app_desktop, 'text', 0
+        )
+        self.ComboBox_app_desktop.set_active(0)
+        hbox_app_desktop.pack_end(self.ComboBox_app_desktop, False, True, 0)
+        
+        
+        # Seccion 2 Apps Optional
+        hbox_app_optional = Gtk.Box(spacing=64)
+        vbox.pack_start(hbox_app_optional, True, True, 0)
+        
+        self.CheckButton_app_optional = Gtk.CheckButton(label='App Optional')
+        #self.CheckButton_app_optional.set_active(True)
+        hbox_app_optional.pack_start(self.CheckButton_app_optional, True, True, 0)
+        
+        if (
+            pathlib.Path(f'{cfg_dir}/App_Optional/'
+                        'App_Optional-wine.txt').exists() or
+        
+            pathlib.Path(f'{cfg_dir}/App_Optional/'
+                        'App_Optional-flatpak.txt').exists() or
+        
+            pathlib.Path(f'{cfg_dir}/App_Optional/'
+                        'App_Optional-woeusb-ng.txt').exists()
+        ): pass
+        else:
+            Util_Debian.App('Optional-wine')
+            Util_Debian.App('Optional-flatpak')
+            Util_Debian.App('Optional-woeusb-ng')
+
+        liststore_app_optional = Gtk.ListStore(str)
+        archives = (
+            sorted(pathlib.Path(f'{cfg_dir}/App_Optional')
+            .glob('App_Optional-*.txt'))
+        )
+        for arch in archives:
+            liststore_app_optional.append([f'{arch}'])
+        
+        self.ComboBox_app_optional = Gtk.ComboBox.new_with_model(
+            liststore_app_optional
+        )
+        CellRendererText_app_optional = Gtk.CellRendererText()
+        self.ComboBox_app_optional.pack_start(CellRendererText_app_optional, True)
+        self.ComboBox_app_optional.add_attribute(
+            CellRendererText_app_optional, 'text', 0
+        )
+        self.ComboBox_app_optional.set_active(0)
+        hbox_app_optional.pack_end(self.ComboBox_app_optional, False, True, 0)
         
         # Seccion Final Iniciar y Salir
         hbox = Gtk.Box(spacing=64)
@@ -137,11 +231,39 @@ class Dialog_Automatic(Gtk.Dialog):
         self.show_all()
         
     def evt_automatic(self, widget):
+        # Seccion 1 Desktop
+        if self.CheckButton_app_desktop.get_active() == True:
+            iter_app_desktop = self.ComboBox_app_desktop.get_active_iter()
+            model_app_desktop = self.ComboBox_app_desktop.get_model()
+            app_desktop = (
+                Util_Debian.App(model_app_desktop[iter_app_desktop][0], '&&\n\n')
+            )
+        else:
+            app_desktop = ''
+            
+        if self.CheckButton_app_optional.get_active() == True:
+            iter_app_optional = self.ComboBox_app_optional.get_active_iter()
+            model_app_optional = self.ComboBox_app_optional.get_model()
+            app_optional = (
+                Util_Debian.App(
+                    txt = '&&\n\n',
+                    txt_title = 'Applications / Optional',
+                    txt_add = '',
+                    cfg_dir = './',
+                    cfg_file = model_app_optional[iter_app_optional][0],
+                    opc = 'continue'
+                )
+            )
+        else:
+            app_optional = ''
+    
+        # Seccion Final Start
         Config_Save(
             Util_Debian.Aptitude('update') + ' &&\n\n' +
             Util_Debian.App('Essential', '&&\n\n') +
             Util_Debian.App('Dependence', '&&\n\n') +
             Util_Debian.App('Uninstall', '&&\n\n') +
+            app_desktop + app_optional +
             Util_Debian.Aptitude('clean')
         )
         
@@ -383,7 +505,6 @@ class Dialog_Application_Optional(Gtk.Dialog):
         #Metodo 2 self.set_default_size(display.get_width(), display.get_height())
         self.set_default_size(512, 512)
         #self.set_resizable(False)
-        cfg_dir = './Script_Preparar-OS_Apps/'
         
         HeaderBar_title = Gtk.HeaderBar()
         HeaderBar_title.set_show_close_button(True)
