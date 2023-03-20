@@ -147,7 +147,7 @@ class Dialog_Automatic(Gtk.Dialog):
         self.CheckButton_app_desktop = Gtk.CheckButton(label='App Desktop')
         #self.CheckButton_app_desktop.set_active(True)
         hbox_app_desktop.pack_start(
-            self.CheckButton_app_desktop, True, True, 0
+            self.CheckButton_app_desktop, False, True, 0
         )
         
         liststore_app_desktop = Gtk.ListStore(str)
@@ -548,7 +548,7 @@ class Dialog_Application_Optional(Gtk.Dialog):
                 #print(f'{nmr}. {arch}')
                 button_app = Gtk.Button(label=f'{arch}')
                 button_app.connect('clicked', self.evt_button_app)
-                vbox_scroll.pack_start(button_app, True, False, 0)
+                vbox_scroll.pack_start(button_app, False, True, 0)
                 
                 self.arch_list.append(f'{arch}')
             
@@ -557,7 +557,7 @@ class Dialog_Application_Optional(Gtk.Dialog):
         
         button_app_all = Gtk.Button(label='Todas las apps')
         button_app_all.connect('clicked', self.evt_app_all)
-        vbox_scroll.pack_end(button_app_all, True, False, 0)
+        vbox.pack_start(button_app_all, False, False, 0)
         
         button_exit = Gtk.Button(label='Salir')
         button_exit.connect('clicked', self.evt_exit)
