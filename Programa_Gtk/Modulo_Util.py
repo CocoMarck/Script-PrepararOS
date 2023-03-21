@@ -238,6 +238,7 @@ def Command_Run(cmd='dir'):
     if sys == 'win':
         txt = Text_Read('Modulo_Util_Win.dat', 'ModeText')
         smb = '"'
+        
     elif sys == 'linux':
         txt = Text_Read('Modulo_Util_Linux.dat', 'ModeText')
         smb = "'"
@@ -247,7 +248,8 @@ def Command_Run(cmd='dir'):
             Title('Pause', see=False) +
             'read -rsp $"Press ENTER..." -n 1 key'
         )
-        cmd = cmd.replace("'", '"')
+
+    cmd = cmd.replace("'", '"')
     
     line_go = []
     for line in txt.split('\n'):
