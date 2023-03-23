@@ -1,2 +1,0 @@
-clear
-python3 Script_Preparar-OS_Gtk.py
