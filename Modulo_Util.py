@@ -1,9 +1,10 @@
 '''Modulo de prueba para usar en mis programas jejej'''
 
-import os, platform
+import os, platform, pathlib, subprocess
+
 
 def System(opc = 'System'):
-    '''Comandos de sistema utiles'''
+    '''Comandos de sistema utiles (Limpiar pantalla - Verción del Sistema - Mostrar Archivos)'''
     cmd = ''
     if opc == 'System':
         '''Devuelve el sistema operativo'''
@@ -156,9 +157,7 @@ def Continue(
 
 
 
-def Name(txt = 'Archivo', sys=sys):
-    nme = input(Title(txt=f'Nombre de {txt}', see=False) +
-              'Nombre: ')
+def Name(nme=''):
     if nme == '':
         nme ='No_name'
     else: pass
@@ -168,27 +167,15 @@ def Name(txt = 'Archivo', sys=sys):
 
 
 
-def Path(txt = 'Ruta', sys=sys):
+def Path(pth, sys=sys):
 #    pth = ''
     CleanScreen()
     pth_fin = ''
-    opc = input(Title(txt=txt, see=False) +
-        "¿Elegir ruta? s/n: ")
     if sys == 'linux':
         pth_fin = '/'
 
-        if opc == "s":
-            pth = input("Escribe la ruta: ")
-        else: pth = "$HOME/"
-
     elif sys == 'win':
         pth_fin = '\\'
-
-        if opc == "s":
-            pth = input("Escribe la ruta: ")
-        else:
-            pth = (os.path.join(os.path.join(os.environ['USERPROFILE']),
-                   'Desktop'))
 
     else: pth = ''
 
@@ -207,3 +194,86 @@ def Path(txt = 'Ruta', sys=sys):
 
     CleanScreen()
     return pth
+    
+
+def Archive_Path(txt='Archivo'):
+    CleanScreen()
+    
+    Title(f'Ruta - {txt}')
+    cfg = Path(input('Ruta/Carpeta: '))
+    
+    Title(f'Nombre - {txt}')
+    cfg = cfg + Name(input('Nombre/Archivo: '))
+    
+    return cfg
+    
+
+def Text_Read(file_and_path='', opc='ModeList'):
+    '''Lee archivos de texto y adjunta la información en una lista, variable o diccionario'''
+    text_final = ''
+
+    if pathlib.Path(file_and_path).exists():
+        with open(file_and_path, 'r') as file_end:
+            text_read = file_end.read()
+   
+        if (opc == 'ModeTextOnly' or
+            opc == 'ModeText'):
+            text_final = ''
+            for text_line in text_read:
+                text_final += text_line
+                
+            if opc == 'ModeTextOnly':
+                text_final = text_final.replace('\n', ' ')
+
+        elif opc == 'ModeDict':
+            text_final = {}
+            text_read = Text_Read(file_and_path, opc='ModeText')
+            nmr = 0
+            for line in text_read.splitlines():
+                nmr += 1
+                text_final.update({nmr : line})
+                
+        elif opc == 'ModeList':
+            text_final = text_read
+
+        else: text_final = text_read
+        
+    else: text_final = 'No existe ese texto'
+
+    return text_final
+
+    
+def Command_Run(cmd='dir'):
+    '''Se encarga de abrir una consola/terminal y ejecutar un comando espeficificado'''
+    if sys == 'win':
+        txt = Text_Read('Modulo_Util_Win.dat', 'ModeText')
+        smb = '"'
+        
+        cmd = (
+            cmd + " & pause"
+        )
+        cmd.replace('\n', ' ')
+        
+    elif sys == 'linux':
+        txt = Text_Read('Modulo_Util_Linux.dat', 'ModeText')
+        smb = "'"
+        
+        cmd = (
+            cmd + ' &&\n\n' +
+            Title('Pause', see=False) +
+            'read -rsp $"Press ENTER..." -n 1 key'
+        )
+
+    cmd = cmd.replace("'", '"')
+    
+    line_go = []
+    for line in txt.split('\n'):
+        if not line.startswith('#'):
+            line_go.append(line)
+        
+    txt = ('\n'.join(line_go)).replace('\n', ' ')
+    
+    print(f'{txt} {smb}{cmd}{smb}')
+    os.system(f'{txt} {smb}{cmd}{smb}')
+    #print(f'{txt} execute {cmd}')
+    #subprocess.Popen([txt, '-e', cmd], stdin=subprocess.PIPE)

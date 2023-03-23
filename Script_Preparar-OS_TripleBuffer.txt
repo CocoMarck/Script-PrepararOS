@@ -1,0 +1,5 @@
+Section "Device"
+   Identifier  "AMD Graphics"
+   Driver      "radeon"
+   Option      "TearFree"  "true"
+EndSection
