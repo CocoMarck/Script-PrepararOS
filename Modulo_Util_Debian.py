@@ -20,7 +20,7 @@ def Aptitude(opc = 'clean', txt=''):
 
     else: cmd = ''
     
-    cmd = cmd + txt
+    cmd = cmd + ' ' + txt
 
 
     return cmd

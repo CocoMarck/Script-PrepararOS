@@ -75,10 +75,24 @@ class Window_Main(Gtk.Window):
         triple_buffer_btn.connect('clicked', self.evt_triple_buffer)
         box_v.pack_start(triple_buffer_btn, True, True, 0)
         
+        # Sona de entry y boton de ejecución de comando
+        cmdrun_box = Gtk.Box(spacing=4)
+        box_v.pack_start(cmdrun_box, True, True, 0)
+        
+        cmdrun_btn = Gtk.Button(label='Ejecutar Comando')
+        cmdrun_btn.connect('clicked', self.evt_command_run)
+        cmdrun_box.pack_start(cmdrun_btn, True, True, 0)
+        
+        self.cmdrun_entry = Gtk.Entry()
+        self.cmdrun_entry.set_placeholder_text('Comando')
+        cmdrun_box.pack_end(self.cmdrun_entry, True, True, 0)
+        
+        # Sección para ver comandos
         view_cmd_btn = Gtk.Button(label='Ver comandos creados')
         view_cmd_btn.connect('clicked', self.evt_view_command)
         box_v.pack_start(view_cmd_btn, True, True, 0)
         
+        # Sección final donde esta el boton exit
         exit_btn = Gtk.Button(label='Salir')
         exit_btn.connect('clicked', self.evt_exit)
         box_v.pack_end(exit_btn, True, True, 16)
@@ -112,6 +126,9 @@ class Window_Main(Gtk.Window):
         dialog = Dialog_TripleBuffer(self)
         dialog.run()
         dialog.destroy()
+        
+    def evt_command_run(self, widget):
+        Config_Save( cfg=self.cmdrun_entry.get_text() )
         
     def evt_view_command(self, widget):
         print('Abrir texto y ver comandos creados')
@@ -280,19 +297,46 @@ class Dialog_Aptitude(Gtk.Dialog):
         box_v = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         box_v.set_property("expand", True)
         
+        # Titulo
         title_label = Gtk.Label()
         title_label.set_markup(f'<b>Aptitude</b>')
         box_v.pack_start(title_label, False, False, 16)
         
+        # Boton para Actualizar
         update_button = Gtk.Button(label='Actualizar')
         update_button.connect('clicked', self.evt_update)
         box_v.pack_start(update_button, True, False, 0)
         
-        
+        # Boton para Limpiar
         clean_button = Gtk.Button(label='Limpiar Apps')
         clean_button.connect('clicked', self.evt_clean)
         box_v.pack_start(clean_button, True, False, 0)
         
+        # Boton para Instalar app
+        box_h = Gtk.Box(spacing=4)
+        box_v.pack_start(box_h, True, True, 0)
+        
+        install_button = Gtk.Button(label='Instalar App')
+        install_button.connect('clicked', self.evt_install)
+        box_h.pack_start(install_button, True, True, 0)
+        
+        self.install_entry = Gtk.Entry()
+        self.install_entry.set_placeholder_text('Aplicación')
+        box_h.pack_end(self.install_entry, False, True, 0)
+        
+        # Boton para Desinstalar app
+        box_h = Gtk.Box(spacing=4)
+        box_v.pack_start(box_h, True, True, 0)
+        
+        purge_button = Gtk.Button(label='Purgar App')
+        purge_button.connect('clicked', self.evt_purge)
+        box_h.pack_start(purge_button, True, True, 0)
+        
+        self.purge_entry = Gtk.Entry()
+        self.purge_entry.set_placeholder_text('Aplicación')
+        box_h.pack_end(self.purge_entry, False, True, 0)
+        
+        # Sección final, salir
         exit_button = Gtk.Button(label='Salir')
         exit_button.connect('clicked', self.evt_exit)
         box_v.pack_end(exit_button, True, False, 16)
@@ -308,6 +352,36 @@ class Dialog_Aptitude(Gtk.Dialog):
     def evt_clean(self, widget):
         Config_Save(
             cfg=Util_Debian.Aptitude('clean')
+        )
+        
+    def evt_install(self, widget):
+        if self.install_entry.get_text() == '':
+            cfg = ''
+        else:
+            cfg = (
+                'sudo apt update &&\n\n' +
+                Util_Debian.Aptitude('install') +
+                self.install_entry.get_text()
+            )
+
+        Config_Save(
+            cfg=cfg
+        )
+        
+    def evt_purge(self, widget):
+        if self.purge_entry.get_text() == '':
+            cfg = ''
+        else:
+            cfg = (
+                Util_Debian.Aptitude('purge') +
+                self.purge_entry.get_text() + ' &&\n\n'
+                'sudo apt autoremove ' +
+                self.purge_entry.get_text() + ' &&\n\n' +
+                Util_Debian.Aptitude('clean')
+            )
+            
+        Config_Save(
+            cfg=cfg
         )
         
     def evt_exit(self, widget):
