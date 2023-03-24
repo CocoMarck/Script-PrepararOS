@@ -46,10 +46,11 @@ class Dialog_TextView(Gtk.Dialog):
 
 
 class Dialog_Command_Run(Gtk.Dialog):
-    def __init__(self, parent, cfg='', txt='Ejecutar Comando'):
+    def __init__(self, parent, cfg='', txt='Ejecutar Comando', cfg_file=''):
         super().__init__(title='Command Run', transient_for=parent, flags=0)
         self.set_default_size(512, 256)
         self.cfg = cfg
+        self.cfg_file = cfg_file
         
         title_HeaderBar = Gtk.HeaderBar()
         title_HeaderBar.set_show_close_button(True)
@@ -86,5 +87,11 @@ class Dialog_Command_Run(Gtk.Dialog):
         self.show_all()
         
     def evt_command_run(self, widget):
-        self.destroy()
+        if self.cfg_file == '':
+            pass
+        else:
+            with open(self.cfg_file, 'a') as file_cfg:
+                    file_cfg.write(self.cfg + f'\n#{Util.Separator(see=False)}\n')
+                
         Util.Command_Run(self.cfg)
+        self.destroy()

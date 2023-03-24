@@ -18,12 +18,10 @@ def Config_Save(cfg=''):
         pass
     else:
         dialog = Util_Gtk.Dialog_Command_Run(
-            None, cfg=cfg
+            None, cfg=cfg, cfg_file=cfg_file
         )
         dialog.run()
         dialog.destroy()
-        with open(cfg_file, 'a') as file_cfg:
-                file_cfg.write(cfg + f'\n#{Util.Separator(see=False)}\n')
 
         # Metodo 2
         #dialog = Gtk.MessageDialog(
