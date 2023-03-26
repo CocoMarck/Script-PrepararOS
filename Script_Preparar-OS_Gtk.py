@@ -126,7 +126,7 @@ class Window_Main(Gtk.Window):
         dialog.destroy()
         
     def evt_command_run(self, widget):
-        Config_Save( cfg=self.cmdrun_entry.get_text() )
+        Util.Command_Run( self.cmdrun_entry.get_text() )
         
     def evt_view_command(self, widget):
         print('Abrir texto y ver comandos creados')

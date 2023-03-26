@@ -20,6 +20,7 @@ def Script_Menu():
             '3. Aptitude\n'
             '4. Repositorios no libres\n'
             '5. Activar Triple buffer\n'
+            '6. Ejecutar Comando\n'
             '9. Ver comandos creados\n'
             '0. Salir\n'
             'Elige una opción: '
@@ -31,6 +32,7 @@ def Script_Menu():
             opc == '3' or
             opc == '4' or
             opc == '5' or
+            opc == '6' or
             opc == '9' or
             opc == '0'
         ):
@@ -110,6 +112,10 @@ def Script_Menu():
             
         elif opc == '5':
             cfg = Triple_Buffer()
+            
+        elif opc == '6':
+            cfg_save = False
+            Util.Command_Run( input('Comando: ') )
             
         elif opc == '9':
             cfg_save = False
