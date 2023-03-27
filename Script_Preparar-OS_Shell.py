@@ -115,7 +115,11 @@ def Script_Menu():
             
         elif opc == '6':
             cfg_save = False
-            Util.Command_Run( input('Comando: ') )
+            cmd = input('Comando: ')
+            if cmd == '':
+                pass
+            else:
+                Util.Command_Run( cmd=cmd )
             
         elif opc == '9':
             cfg_save = False
