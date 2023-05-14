@@ -337,3 +337,37 @@ def App(
     Util.CleanScreen()
 
     return cfg
+
+
+def Mouse_Config(opc='', txt=''):
+    title = Util.Title(txt='Mouse Config', see=False)
+
+    path = '/usr/share/X11/xorg.conf.d/'
+    file_txt = f'Script_Mouse-Acceleration.{fnl}'
+    file_copy = f'sudo cp {file_txt}'
+    file_remove = f'sudo rm {path}*mouse-acceleration*.conf &&\n'
+    
+    if opc == 'AccelerationON':
+        file_copy = '# Acceleration ON'
+
+    elif opc == 'AccelerationOFF':
+        with open(file_txt, "w") as file_txt:
+            file_txt.write(
+                'Section "InputClass"\n'
+                '    Identifier "my_mouse"\n'
+                '    MatchIsPointer "yes"\n'
+                '    Option "AccelerationProfile" "-1"\n'
+                '    Option "AccelerationScheme" "none"\n'
+                '    Option "AccelSpeed" "-1"\n'
+                'EndSection'
+            )
+
+        file_copy = f'{file_copy} {path}50-mouse-acceleration.conf'
+        file_remove = ''
+        
+    else:
+        title, file_remove, file_copy, txt = '', '', '', ''
+
+    cfg = title + file_remove + file_copy + ' ' + txt
+
+    return cfg

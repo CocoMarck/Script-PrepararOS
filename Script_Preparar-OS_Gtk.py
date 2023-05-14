@@ -23,36 +23,16 @@ def Config_Save(cfg=''):
         dialog.run()
         dialog.destroy()
 
-        # Metodo 2
-        #dialog = Gtk.MessageDialog(
-        #    transient_for=None,
-        #    flags=0,
-        #    message_type=Gtk.MessageType.QUESTION,
-        #    buttons=Gtk.ButtonsType.YES_NO,
-        #    text='¿Confirmar comando?'
-        #)
-        #dialog.format_secondary_text(cfg)
-        #response = dialog.run()
-        #if response == Gtk.ResponseType.YES:
-        #    Util.Command_Run(cfg)
-        #    with open(cfg_file, 'a') as file_cfg:
-        #            file_cfg.write(cfg + f'\n#{Util.Separator(see=False)}\n')
-        #elif response == Gtk.ResponseType.NO:
-        #    pass
-        #dialog.destroy()
-
 class Window_Main(Gtk.Window):
     def __init__(self):
-        super().__init__(title='Window Main')
-        self.set_resizable(False)
+        super().__init__(title='Preparing OS')
+        self.set_resizable(True)
         self.set_default_size(160, 256)
         
+        # Contenedor Principal
         box_v = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         
-        title_label = Gtk.Label()
-        title_label.set_markup('<b>Preparar Sistema</b>')
-        box_v.pack_start(title_label, False, False, 16)
-        
+        # Seccion Vertical - Botones Principales
         auto_btn = Gtk.Button(label='Automatico')
         auto_btn.connect('clicked', self.evt_automatic)
         box_v.pack_start(auto_btn, True, True, 0)
@@ -73,7 +53,11 @@ class Window_Main(Gtk.Window):
         triple_buffer_btn.connect('clicked', self.evt_triple_buffer)
         box_v.pack_start(triple_buffer_btn, True, True, 0)
         
-        # Sona de entry y boton de ejecución de comando
+        mouse_cfg_btn = Gtk.Button(label='Configuración del mouse')
+        mouse_cfg_btn.connect('clicked', self.evt_mouse_cfg)
+        box_v.pack_start(mouse_cfg_btn, True, True, 0)
+        
+        # Seccion Vertical - Boton comando Perzonalizado
         cmdrun_box = Gtk.Box(spacing=4)
         box_v.pack_start(cmdrun_box, True, True, 0)
         
@@ -85,43 +69,44 @@ class Window_Main(Gtk.Window):
         self.cmdrun_entry.set_placeholder_text('Comando')
         cmdrun_box.pack_end(self.cmdrun_entry, True, True, 0)
         
-        # Sección para ver comandos
+        # Sección Vertical - Boton ver comandos
         view_cmd_btn = Gtk.Button(label='Ver comandos creados')
         view_cmd_btn.connect('clicked', self.evt_view_command)
         box_v.pack_start(view_cmd_btn, True, True, 0)
         
-        # Sección final donde esta el boton exit
+        # Sección Vertical - Boton exit
         exit_btn = Gtk.Button(label='Salir')
         exit_btn.connect('clicked', self.evt_exit)
         box_v.pack_end(exit_btn, True, True, 16)
         
+        # Fin, agregar el contenedor prinicpal a la ventana
         self.add(box_v)
         
     def evt_automatic(self, widget):
-        print('Preparación automatica')
         dialog = Dialog_Automatic(self)
         dialog.run()
         dialog.destroy()
         
     def evt_application(self, widget):
-        print('Instalar Aplicaciones')
         dialog = Dialog_Application_Menu(self)
         dialog.run()
         dialog.destroy()
         
     def evt_aptitude(self, widget):
-        print('Menu Aptitude')
         dialog = Dialog_Aptitude(self)
         response = dialog.run()
         dialog.destroy()
         
     def evt_repository(self, widget):
-        print('Cambiar repositorios')
         Config_Save(cfg=Util_Debian.Repository())
         
     def evt_triple_buffer(self, widget):
-        print('Activar Triple Buffer')
         dialog = Dialog_TripleBuffer(self)
+        dialog.run()
+        dialog.destroy()
+        
+    def evt_mouse_cfg(self, widget):
+        dialog = Dialog_mouse_cfg(self)
         dialog.run()
         dialog.destroy()
         
@@ -132,7 +117,6 @@ class Window_Main(Gtk.Window):
             Util.Command_Run( self.cmdrun_entry.get_text() )
         
     def evt_view_command(self, widget):
-        print('Abrir texto y ver comandos creados')
         dialog = Util_Gtk.Dialog_TextView(self,
                      text=Util.Text_Read(cfg_file, 'ModeText')
                  )
@@ -140,23 +124,18 @@ class Window_Main(Gtk.Window):
         dialog.destroy()
         
     def evt_exit(self, widget):
-        print('Hasta la proxima...')
         self.destroy()
         
 
 class Dialog_Automatic(Gtk.Dialog):
     def __init__(self, parent):
-        super().__init__(title='Dialog Automatic', transient_for=parent, flags=0)
+        super().__init__(title='Automatic Mode', transient_for=parent, flags=0)
         self.set_default_size(512, -1)
         self.set_resizable(False)
         
+        # Contenedor Principal
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         vbox.set_property("expand", True)
-        
-        label_title = Gtk.Label()
-        label_title.set_markup('<b>Automatico</b>')
-        vbox.pack_start(label_title, True, True, 0)
-        
         
         # Seccion 1 Apps Desktop
         hbox_app_desktop = Gtk.Box(spacing=0)
@@ -291,17 +270,13 @@ class Dialog_Automatic(Gtk.Dialog):
 
 class Dialog_Aptitude(Gtk.Dialog):
     def __init__(self, parent):
-        super().__init__(title='Dialog Aptitude', transient_for=parent, flags=0)
+        super().__init__(title='Aptitude Options', transient_for=parent, flags=0)
         self.set_resizable(False)
         self.set_default_size(256, -1)
         
+        # Contenedor Principal
         box_v = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         box_v.set_property("expand", True)
-        
-        # Titulo
-        title_label = Gtk.Label()
-        title_label.set_markup(f'<b>Aptitude</b>')
-        box_v.pack_start(title_label, False, False, 16)
         
         # Boton para Actualizar
         update_button = Gtk.Button(label='Actualizar')
@@ -392,22 +367,20 @@ class Dialog_Aptitude(Gtk.Dialog):
 class Dialog_TripleBuffer(Gtk.Dialog):
     def __init__(self, parent):
         super().__init__(
-            title='Dialog TripleBuffer', transient_for=parent, flags=0
+            title='Triple Buffer Config', transient_for=parent, flags=0
         )
         self.set_resizable(False)
         self.set_default_size(304, 128)
         
+        # Contenedor Principal
         box_v = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         box_v.set_property("expand", True)
         
-        label_title = Gtk.Label()
-        label_title.set_markup('<b>Triple Buffer</b>')
-        box_v.pack_start(label_title, True, True, 0)
-        
+        # Secciones Verticales - Opciones
         cmd = 'grep drivers /var/log/Xorg.0.log'
         cmd_run = str(
                       subprocess.check_output(
-                          cmd, shell=True
+                          cmd, shell=True, text=True
                       )
                   )
         label_command = Gtk.Label()
@@ -432,6 +405,7 @@ class Dialog_TripleBuffer(Gtk.Dialog):
         btn_none.connect('clicked', self.evt_none)
         box_v.pack_end(btn_none, True, False, 16)
         
+        # Fin, Mostrar Contenedor principal y todo
         self.get_content_area().add(box_v)
         self.show_all()
         
@@ -452,17 +426,15 @@ class Dialog_TripleBuffer(Gtk.Dialog):
 class Dialog_Application_Menu(Gtk.Dialog):
     def __init__(self, parent):
         super().__init__(
-            title='Dialog Application', transient_for=parent, flags=0
+            title='Application Menu', transient_for=parent, flags=0
         )
         self.set_resizable(False)
         self.set_default_size(256, -1)
         
+        # Contenedor Principal
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         
-        label_title = Gtk.Label()
-        label_title.set_markup('<b>Aplicaciónes</b>')
-        vbox.pack_start(label_title, True, True, 16)
-        
+        # Secciones Verticales - Opciones
         button_App_Essential = Gtk.Button(label='Esensiales')
         button_App_Essential.connect('clicked', self.evt_App_Essential)
         vbox.pack_start(button_App_Essential, True, True, 0)
@@ -487,6 +459,7 @@ class Dialog_Application_Menu(Gtk.Dialog):
         button_Exit.connect('clicked', self.evt_Exit)
         vbox.pack_end(button_Exit, False, False, 16)
         
+        # Fin, Mostrar contenedor principal y todo
         self.get_content_area().add(vbox)
         self.show_all()
         
@@ -522,18 +495,21 @@ class Dialog_Application_Menu(Gtk.Dialog):
 class Dialog_Application_Desktop(Gtk.Dialog):
     def __init__(self, parent):
         super().__init__(
-            title='Dialog App Desktop', transient_for=parent, flags=0
+            title='Application Desktop', transient_for=parent, flags=0
         )
         self.set_default_size(256, -1)
         self.set_resizable(False)
         
+        # Establecer Bara titular
         HeaderBar_title = Gtk.HeaderBar()
         HeaderBar_title.set_show_close_button(True)
         HeaderBar_title.props.title = 'Aplicaciones Escritorio'
         self.set_titlebar(HeaderBar_title)
         
+        # Contenedor Principal
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         
+        # Secciones verticales - Opciones
         button_app_desktop = Gtk.Button(label='Desktop-xfce4')
         button_app_desktop.connect('clicked', self.evt_app_desktop)
         vbox.pack_start(button_app_desktop, True, True, 0)
@@ -558,6 +534,7 @@ class Dialog_Application_Desktop(Gtk.Dialog):
         button_exit.connect('clicked', self.evt_exit)
         vbox.pack_end(button_exit, True, False, 16)
         
+        # Fin Mostrar contenedor principal y todo
         self.get_content_area().add(vbox)
         self.show_all()
         
@@ -573,7 +550,7 @@ class Dialog_Application_Desktop(Gtk.Dialog):
 class Dialog_Application_Optional(Gtk.Dialog):
     def __init__(self, parent):
         super().__init__(
-            title='Dialog App Optional', transient_for=parent, flags=0
+            title='Application Optional', transient_for=parent, flags=0
         )
         #Metodo 1 self.fullscreen()
         #Metodo 2 display = Gdk.Screen.get_default()
@@ -581,13 +558,16 @@ class Dialog_Application_Optional(Gtk.Dialog):
         self.set_default_size(512, 512)
         #self.set_resizable(False)
         
+        # Barra titular 
         HeaderBar_title = Gtk.HeaderBar()
         HeaderBar_title.set_show_close_button(True)
         HeaderBar_title.props.title = 'Aplicaciones Opcionales'
         self.set_titlebar(HeaderBar_title)
         
+        # Contnedor Principal
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         
+        # Secciones verticales - Todos los widgets
         scroll_button = Gtk.ScrolledWindow()
         scroll_button.set_hexpand(True)
         scroll_button.set_vexpand(True)
@@ -638,6 +618,7 @@ class Dialog_Application_Optional(Gtk.Dialog):
         button_exit.connect('clicked', self.evt_exit)
         vbox.pack_end(button_exit, False, False, 16)
         
+        # Fin Mostrar contenedor principal y todo
         self.get_content_area().add(vbox)
         self.show_all()
         
@@ -683,6 +664,49 @@ class Dialog_Application_Optional(Gtk.Dialog):
     
     def evt_exit(self, widget):
         self.destroy()
+        
+
+class Dialog_mouse_cfg(Gtk.Dialog):
+    def __init__(self, parent):
+        super().__init__(title='Mouse Config')
+        self.set_default_size(256, 128)
+        
+        # Contenedor Principal
+        vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        vbox_main.set_property('expand', True)
+        
+        # Seccion Vertical 1 - Activar/Desactivar Aceleracion
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        vbox_main.pack_start(hbox, True, False, 0)
+        
+        self.label_acceleration = Gtk.Label(label='')
+        hbox.pack_start(self.label_acceleration, False, True, 0)
+        
+        switch_acceleration = Gtk.Switch()
+        if pathlib.Path(
+            '/usr/share/X11/xorg.conf.d/'
+            '50-mouse-acceleration.conf'
+        ).exists():
+            switch_acceleration.set_active(False)
+            self.label_acceleration.set_text('AccelerationOFF:')
+        else:
+            switch_acceleration.set_active(True)
+            self.label_acceleration.set_text('AccelerationON')
+        switch_acceleration.connect('notify::active', self.evt_acceleration)
+        hbox.pack_end(switch_acceleration, False, True, 0)
+        
+        # Fin, agregar contenedor principal y mostrar todo
+        self.get_content_area().add(vbox_main)
+        self.show_all()
+        
+    def evt_acceleration(self, switch, gparam):
+        if switch.get_active():
+            option = 'AccelerationON'
+        else:
+            option = 'AccelerationOFF'
+        self.label_acceleration.set_text(f'{option}:')
+        Config_Save( Util_Debian.Mouse_Config( option ) )
+            
         
 
 win = Window_Main()

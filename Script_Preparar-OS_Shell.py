@@ -20,7 +20,8 @@ def Script_Menu():
             '3. Aptitude\n'
             '4. Repositorios no libres\n'
             '5. Activar Triple buffer\n'
-            '6. Ejecutar Comando\n'
+            '6. Configuración de Mouse\n'
+            '7. Ejecutar Comando\n'
             '9. Ver comandos creados\n'
             '0. Salir\n'
             'Elige una opción: '
@@ -33,6 +34,7 @@ def Script_Menu():
             opc == '4' or
             opc == '5' or
             opc == '6' or
+            opc == '7' or
             opc == '9' or
             opc == '0'
         ):
@@ -114,6 +116,9 @@ def Script_Menu():
             cfg = Triple_Buffer()
             
         elif opc == '6':
+            cfg = Mouse_Config()
+            
+        elif opc == '7':
             cfg_save = False
             cmd = input('Comando: ')
             if cmd == '':
@@ -323,6 +328,28 @@ def Triple_Buffer(txt=''):
         cfg = ''
         
     return cfg
+    
+
+def Mouse_Config():
+    Util.Title('Configuración de Mouse')
+
+    if pathlib.Path(
+        '/usr/share/X11/xorg.conf.d/'
+        '50-mouse-acceleration.conf'
+    ).exists():
+        option = Util.Continue('AccelerationOFF ¿Activar?')
+        if option == 's':
+            option = Util_Debian.Mouse_Config('AccelerationON')
+        elif option == 'n':
+            option = ''
+    else:
+        option = Util.Continue('AccelerationON ¿Desactivar?')
+        if option == 's':
+            option = Util_Debian.Mouse_Config('AccelerationOFF')
+        elif option == 'n':
+            option = ''
+
+    return option
 
 
 if __name__ == '__main__':
