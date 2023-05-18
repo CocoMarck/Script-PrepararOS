@@ -1,5 +1,6 @@
 import Modulo_Util as Util
 import pathlib, os
+from glob import glob
 
 fnl = 'txt'
 err = '# Configuración erronea'
@@ -83,7 +84,21 @@ def TripleBuffer(opc='', txt=''):
     path = '/etc/X11/xorg.conf.d/'
     file_txt = f'Script_Preparar-OS_TripleBuffer.{fnl}'
     file_copy = f'sudo cp {file_txt}'
-    file_remove = f'sudo rm {path}20-* &&\n'
+    file_remove = ''
+    try:
+        archives = (
+            sorted(
+                pathlib.Path(f'{path}')
+                .glob('20-*')
+            )
+        )
+        for arch in archives:
+            if pathlib.Path(f'{arch}').exists():
+                file_remove = f'sudo rm {path}20-* &&\n'
+            else:
+                pass
+    except:
+        pass
 
     Triple_Buffer = {
         '20-radeon.conf': [
