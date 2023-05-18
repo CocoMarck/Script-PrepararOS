@@ -8,7 +8,7 @@ fnl = 'txt'
 err = '# Configuración erronea'
 
 def Script_Menu():
-    cfg_file = f'Script_Preparar-OS_CFG.{fnl}'
+    cfg_file = f'Script_CFG.{fnl}'
     
     loop = True
     while loop == True:
@@ -207,13 +207,13 @@ def App_Menu(opc='Desktop', txt=''):
 
     elif opc == 'Optional':
         if (
-            pathlib.Path('./Script_Preparar-OS_Apps/App_Optional/'
+            pathlib.Path('./Script_Apps/App_Optional/'
                         'App_Optional-wine.txt').exists() or
         
-            pathlib.Path('./Script_Preparar-OS_Apps/App_Optional/'
+            pathlib.Path('./Script_Apps/App_Optional/'
                         'App_Optional-flatpak.txt').exists() or
         
-            pathlib.Path('./Script_Preparar-OS_Apps/App_Optional/'
+            pathlib.Path('./Script_Apps/App_Optional/'
                         'App_Optional-woeusb-ng.txt').exists()
         ): 
             pass
@@ -225,7 +225,7 @@ def App_Menu(opc='Desktop', txt=''):
             
         try:
             archives = sorted(
-                    pathlib.Path('./Script_Preparar-OS_Apps/App_Optional')
+                    pathlib.Path('./Script_Apps/App_Optional')
                     .glob('App_Optional-*.txt')
             )
             

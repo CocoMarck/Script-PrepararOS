@@ -10,8 +10,8 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
 
-cfg_file = f'Script_Preparar-OS_CFG.txt'
-cfg_dir = './Script_Preparar-OS_Apps/'
+cfg_file = f'Script_CFG.txt'
+cfg_dir = './Script_Apps/'
 
 def Config_Save(cfg=''):
     if cfg == '':

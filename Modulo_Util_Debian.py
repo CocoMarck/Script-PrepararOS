@@ -29,7 +29,7 @@ def Aptitude(opc = 'clean', txt=''):
 
 def Repository(txt=''):
     # Ruta y archivo
-    file_source = f'Script_Preparar-OS_sources.{fnl}'
+    file_source = f'Script_sources.{fnl}'
     path = '/etc/apt/'
 
     # Detectar si existe sources.list crear texto non-free
@@ -75,7 +75,7 @@ def TripleBuffer(opc='', txt=''):
     #os.system('grep drivers /var/log/Xorg.0.log ')
 
     path = '/etc/X11/xorg.conf.d/'
-    file_txt = f'Script_Preparar-OS_TripleBuffer.{fnl}'
+    file_txt = f'Script_TripleBuffer.{fnl}'
     file_copy = f'sudo cp {file_txt}'
     file_remove = ''
     try:
@@ -145,7 +145,7 @@ def App(
         txt = '',
         cfg_save = True,
         cfg_file = '',
-        cfg_dir = './Script_Preparar-OS_Apps/',
+        cfg_dir = './Script_Apps/',
         txt_title = 'Applications / ',
         txt_add = Aptitude('install'),
     ):
@@ -253,8 +253,8 @@ def App(
         ]                
     }
 
-    if pathlib.Path('Script_Preparar-OS_Apps').exists(): pass
-    else: os.mkdir('Script_Preparar-OS_Apps')
+    if pathlib.Path('Script_Apps').exists(): pass
+    else: os.mkdir('Script_Apps')
 
     cfg = ''
     txt_fnl = ''
