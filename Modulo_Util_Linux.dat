@@ -1,2 +1,2 @@
-xterm -e
+xterm -e # Terminal por defecto
 # xfce4-terminal --startup-id= -e

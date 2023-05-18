@@ -1,5 +1,5 @@
-bleachbit
-transmission
+bleachbit # Aplicacion para limpiar el pc
+transmission # Para abrir torrents
 p7zip-full
 eog
 ffmpeg

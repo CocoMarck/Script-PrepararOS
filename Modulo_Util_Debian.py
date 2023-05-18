@@ -319,12 +319,14 @@ def App(
 
     if cfg_save == True:
         # Leer Archivo.txt y almacenar info en una sola variable.
-        with open(cfg_file, "r") as file_txt:
-            txt_file = file_txt.readlines()
-            txt_fnl = ''
-            for txt_ln in txt_file:
-                txt_fnl += txt_ln.replace('\n', ' ')
-
+        txt_fnl = Util.Ignore_Comment(
+            text=Util.Text_Read(
+                file_and_path = cfg_file,
+                opc='ModeText'
+            ),
+            
+            comment='#'
+        ).replace('\n', ' ')
 
         if txt_add == '': pass
         else: txt_add += ' '
