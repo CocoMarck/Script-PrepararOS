@@ -28,50 +28,43 @@ def Aptitude(opc = 'clean', txt=''):
 
 
 def Repository(txt=''):
+    # Ruta y archivo
     file_source = f'Script_Preparar-OS_sources.{fnl}'
     path = '/etc/apt/'
 
+    # Detectar si existe sources.list crear texto non-free
     if pathlib.Path(file_source).exists(): pass
     else:
-        with open(file_source, 'w') as source_file:
-            source_file.write(
-                    '#Debian 11\n'
-                    '\n'
-                    '# Main Repo - main contrib non-free\n'
-                    'deb http://deb.debian.org/debian/ bullseye main contrib non-free\n'
-                    '#deb-src http://deb.debian.org/debian/ bullseye main contrib non-free\n'
-                    '\n'
-                    '# Security Repo - main contrib non-free\n'
-                    'deb http://security.debian.org/ bullseye-security main contrib non-free\n'
-                    '#deb-src http://security.debian.org/ bullseye-security main contrib non-free\n'
-                    '\n'
-                    '# Updates Repo - main contrib non-free\n'
-                    'deb http://deb.debian.org/debian bullseye-updates main contrib non-free\n'
-                    '#deb-src http://deb.debian.org/debian bullseye-updates main\n'
-                    '\n'
-                    '# Proposed Updates Repo - main contrib non-free\n'
-                    '#deb http://deb.debian.org/debian/ bullseye-proposed-updates main contrib non-free\n'
-                    '#deb-src http://deb.debian.org/debian/ bullseye-proposed-updates main contrib non-free\n'
-                    '\n'
-                    '# bullseye-backports, previously on backports.debian.org\n'
-                    'deb http://deb.debian.org/debian/ bullseye-backports main contrib non-free\n'
-                    '#deb-src http://deb.debian.org/debian/ bullseye-backports main contrib non-free\n'
-                    '\n'
-                    '# Testing repo used to get software not in the normal repos\n'
-                    '#deb http://deb.debian.org/debian/ testing main contrib non-free\n'
-                    '\n'
-                    '# Unstable repo used to get software not in the normal repos\n'
-                    '#deb http://deb.debian.org/debian/ unstable main contrib non-free'
+        if pathlib.Path(f'{path}sources.list').exists():
+            archive = Util.Text_Read(
+                file_and_path=f'{path}sources.list',
+                opc='ModeText'
             )
+        
+            text_ready = ''
+            for line in archive.split('\n'):
+                if (
+                    line.startswith('deb') and
+                    line.endswith('main contrib')
+                ):
+                    text_ready += f'{line} non-free\n'
+                else:
+                    text_ready += line + '\n'
 
+            # Para eliminar el ultimo salto de linea
+            text_ready = text_ready[:-1]
+            with open(file_source, 'w') as file_ready:
+                file_ready.write(text_ready)
+        else:
+            pass
 
-
+    # Fin Agregar Configuracion
     if pathlib.Path(path + 'sources.list').exists():
         cfg = (Util.Title(txt='Repositorios', see=False) +
             f'sudo mv {path}sources.list {path}BackUp_sources.list &&\n'
             f'sudo cp {file_source} {path}sources.list {txt}')
 
-    else: cfg = f'sudo cp {file_source} {path}sources.list {txt}'
+    else: cfg = f'# No se detecto "{path}{file_source}"'
 
 
     return cfg
@@ -181,11 +174,9 @@ def App(
             'gnome-sound-recorder',
             'libsdl2-mixer-2.0-0',
             'cpu-x',
-            'ntp',
             'gnome-disk-utility',
             'fonts-noto-color-emoji',
-            'telegram-desktop',
-            '&& sudo systemctl enable ntp'
+            'telegram-desktop'
         ],
 
         'Dependence' : [
