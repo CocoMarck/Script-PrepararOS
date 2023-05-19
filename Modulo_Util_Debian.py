@@ -64,7 +64,7 @@ def Repository(txt=''):
             f'sudo mv {path}sources.list {path}BackUp_sources.list &&\n'
             f'sudo cp {file_source} {path}sources.list {txt}')
 
-    else: cfg = f'# No se detecto "{path}{file_source}"'
+    else: cfg = f'# No se detecto "{path}sources.list"'
 
 
     return cfg
@@ -153,90 +153,43 @@ def App(
 
     apps = {
        'Essential' : [
-            'bleachbit',
-            'transmission',
-            'p7zip-full',
-            'eog',
-            'ffmpeg',
-            'scrcpy',
-            'adb',
-            'htop',
-            'neofetch',
-            'mpv',
-            'gdebi',
-            'mangohud',
-            'thunderbird',
-            'wget',
-            'openjfx',
-            'git',
-            'curl',
-            'youtube-dl',
-            'gnome-sound-recorder',
-            'libsdl2-mixer-2.0-0',
-            'cpu-x',
-            'gnome-disk-utility',
-            'fonts-noto-color-emoji',
-            'telegram-desktop'
+            '# Essential',
+            'neofetch'
         ],
 
         'Dependence' : [
-            'gir1.2-libxfce4ui-2.0',
-            'gir1.2-libxfce4util-1.0',
-            'libc6:i386',
-            'libasound2:i386',
-            'libasound2-data:i386',
-            'libasound2-plugins:i386',
-            'libgtk2.0-0:i386',
-            'libxml2:i386',
-            'libsm6:i386',
-            'libqt5widgets5'
+            '# Dependences',
+            'p7zip-full'
         ],
 
         'Uninstall' : [
-            'mozc-data',
-            'mozc-server',
-            'mlterm-common',
-            'xiterm+thai',
-            'fcitx-data',
-            'fcitx5-data',
-            'goldendict',
-            'uim',
-            'anthy',
-            'kasumi',
-            'audacious'
+            '# Unisnstall',
+            'mozc-data'
         ],
 
 
         'Desktop-xfce4': [
-            'gnome-calculator', 
-            'eog',
-            'bijiben',
-            'gvfs-backends',
-            'gparted',
-            'menulibre',
-            'lightdm-gtk-greeter-settings',
-            'gnome-software',
-            'blueman',
-            'atril',
-            'file-roller',
-            'xfce4-goodies',
-            'telegram-desktop',
-            'redshift-gtk'
+            '# task-xfce-desktop # For install Xfce Desktop',
+            'xfce4-goodies'
         ],
 
         'Desktop-kdeplasma': [
+            '# task-kde-desktop # For install KDE Desktop',
             'rofi'                
         ],
 
         'Desktop-gnome3': [
+            '# task-gnome-desktop # For install Gnome Desktop',
             'rofi'
         ],
 
         'Desktop-lxde': [
+            '# task-lxde-desktop # For install lxde Desktop',
             'rofi'
         ],
 
         'Desktop-mate': [
+            '# task-mate-desktop # For install Mate Desktop',
             'rofi'
         ],
 
