@@ -11,7 +11,7 @@ from gi.repository import Gtk
 
 
 cfg_file = f'Script_CFG.txt'
-cfg_dir = './Script_Apps/'
+cfg_dir = 'Script_Apps/'
 
 def Config_Save(cfg=''):
     if cfg == '':
@@ -194,9 +194,11 @@ class Dialog_Automatic(Gtk.Dialog):
             Util_Debian.App('Optional-woeusb-ng')
 
         liststore_app_optional = Gtk.ListStore(str)
-        archives = (
-            sorted(pathlib.Path(f'{cfg_dir}/App_Optional')
-            .glob('App_Optional-*.txt'))
+        self.path_app_optional = f'{cfg_dir}App_Optional/'
+        archives = Util.Files_List(
+            files='App_Optional-*.txt',
+            path=self.path_app_optional,
+            remove_path=True
         )
         for arch in archives:
             liststore_app_optional.append([f'{arch}'])
@@ -247,7 +249,10 @@ class Dialog_Automatic(Gtk.Dialog):
                     txt_title = 'Applications / Optional',
                     txt_add = '',
                     cfg_dir = './',
-                    cfg_file = model_app_optional[iter_app_optional][0],
+                    cfg_file = (
+                        self.path_app_optional + 
+                        model_app_optional[iter_app_optional][0]
+                    ),
                     opc = 'continue'
                 )
             )
@@ -592,9 +597,11 @@ class Dialog_Application_Optional(Gtk.Dialog):
             vbox_scroll = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
             scroll_button.add(vbox_scroll)
         
-            archives = (
-                sorted(pathlib.Path(f'{cfg_dir}/App_Optional')
-                .glob('App_Optional-*.txt'))
+            self.path_app_optional = f'{cfg_dir}App_Optional/'
+            archives = Util.Files_List(
+                files='App_Optional-*.txt',
+                path=self.path_app_optional,
+                remove_path=True
             )
             self.arch_list = []
             #nmr = 0
@@ -631,7 +638,10 @@ class Dialog_Application_Optional(Gtk.Dialog):
                     txt_title = 'Applications / Optional',
                     txt_add = '',
                     cfg_dir = './',
-                    cfg_file = button_app.get_label(),
+                    cfg_file = (
+                        self.path_app_optional +
+                        button_app.get_label()
+                    ),
                     opc = 'continue'
                 )
             )
@@ -649,7 +659,10 @@ class Dialog_Application_Optional(Gtk.Dialog):
                 txt_title = 'Applications / Optional',
                 txt_add = '',
                 cfg_dir = './',
-                cfg_file = arch,
+                cfg_file = (
+                    self.path_app_optional +
+                    arch
+                ),
                 opc = 'continue'
             )
             app_all += app
