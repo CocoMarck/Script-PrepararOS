@@ -1,7 +1,6 @@
 import Modulo_Util as Util
 import Modulo_Util_Debian as Util_Debian
 import os, pathlib, subprocess
-from glob import glob
 
 
 fnl = 'txt'
@@ -224,9 +223,11 @@ def App_Menu(opc='Desktop', txt=''):
             Util_Debian.App('Optional-woeusb-ng')
             
         try:
-            archives = sorted(
-                    pathlib.Path('./Script_Apps/App_Optional')
-                    .glob('App_Optional-*.txt')
+            path_app_optional = 'Script_Apps/App_Optional/'
+            archives = Util.Files_List(
+                files='App_Optional-*.txt',
+                path=path_app_optional,
+                remove_path=True
             )
             
             dict_archive = {}
@@ -251,7 +252,10 @@ def App_Menu(opc='Desktop', txt=''):
                     txt_title = 'Applications / Optional',
                     txt_add = '',
                     cfg_dir = './',
-                    cfg_file = str(dict_archive[opc]),
+                    cfg_file = (
+                        path_app_optional +
+                        str(dict_archive[opc])
+                    ),
                     opc = 'continue'
                 )
                 
@@ -263,7 +267,10 @@ def App_Menu(opc='Desktop', txt=''):
                         txt_title='Application / Optional',
                         txt_add='',
                         cfg_dir='./',
-                        cfg_file=str(dict_archive[number]),
+                        cfg_file=(
+                            path_app_optional +
+                            str(dict_archive[number])
+                        ),
                         opc='continue'
                     )
                     number -= 1 
