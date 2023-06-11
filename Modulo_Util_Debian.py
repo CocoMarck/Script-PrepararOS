@@ -47,7 +47,7 @@ def Repository(txt=''):
                     line.startswith('deb') and
                     line.endswith('main contrib')
                 ):
-                    text_ready += f'{line} non-free\n'
+                    text_ready += f'{line} non-free-firmware\n'
                 else:
                     text_ready += line + '\n'
 
