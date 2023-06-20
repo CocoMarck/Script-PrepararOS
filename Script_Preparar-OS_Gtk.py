@@ -1,8 +1,7 @@
-import Modulo_Util as Util
-import Modulo_Util_Debian as Util_Debian
-import Modulo_Util_Gtk as Util_Gtk
+from Modulos import Modulo_Util as Util
+from Modulos import Modulo_Util_Debian as Util_Debian
+from Interface import Modulo_Util_Gtk as Util_Gtk
 import pathlib, subprocess
-from glob import glob
 
 import gi
 

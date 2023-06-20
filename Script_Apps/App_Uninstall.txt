@@ -1,3 +1,4 @@
+# Aplicaciones-dependencias que no utilizo
 mozc-data
 mozc-server
 mlterm-common

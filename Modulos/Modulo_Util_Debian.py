@@ -1,4 +1,4 @@
-import Modulo_Util as Util
+from . import Modulo_Util as Util
 import pathlib, os
 from glob import glob
 

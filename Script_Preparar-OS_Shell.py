@@ -1,5 +1,5 @@
-import Modulo_Util as Util
-import Modulo_Util_Debian as Util_Debian
+from Modulos import Modulo_Util as Util
+from Modulos import Modulo_Util_Debian as Util_Debian
 import os, pathlib, subprocess
 
 
