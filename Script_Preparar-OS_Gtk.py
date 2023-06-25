@@ -1,6 +1,7 @@
 from Modulos import Modulo_Util as Util
 from Modulos import Modulo_Util_Debian as Util_Debian
 from Interface import Modulo_Util_Gtk as Util_Gtk
+from Modulos.Modulo_Language import get_text as Lang
 import pathlib, subprocess
 
 import gi
@@ -32,11 +33,11 @@ class Window_Main(Gtk.Window):
         box_v = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         
         # Seccion Vertical - Botones Principales
-        auto_btn = Gtk.Button(label='Automatico')
+        auto_btn = Gtk.Button(label=Lang('auto') )
         auto_btn.connect('clicked', self.evt_automatic)
         box_v.pack_start(auto_btn, True, True, 0)
         
-        app_btn = Gtk.Button(label='Aplicaciones')
+        app_btn = Gtk.Button( label=f"{Lang('app_menu')}" )
         app_btn.connect('clicked', self.evt_application)
         box_v.pack_start(app_btn, True, True, 0)
         
@@ -44,15 +45,15 @@ class Window_Main(Gtk.Window):
         apt_btn.connect('clicked', self.evt_aptitude)
         box_v.pack_start(apt_btn, True, True, 0)
         
-        repo_btn = Gtk.Button(label='Repositorios NO LIBRES')
+        repo_btn = Gtk.Button(label=Lang('repos_nonfree') )
         repo_btn.connect('clicked', self.evt_repository)
         box_v.pack_start(repo_btn, True, True, 0)
         
-        triple_buffer_btn = Gtk.Button(label='Activar Triple Buffer')
+        triple_buffer_btn = Gtk.Button(label=Lang('on_3_buffer') )
         triple_buffer_btn.connect('clicked', self.evt_triple_buffer)
         box_v.pack_start(triple_buffer_btn, True, True, 0)
         
-        mouse_cfg_btn = Gtk.Button(label='Configuración del mouse')
+        mouse_cfg_btn = Gtk.Button(label=f'{Lang("cfg")} - Mouse')
         mouse_cfg_btn.connect('clicked', self.evt_mouse_cfg)
         box_v.pack_start(mouse_cfg_btn, True, True, 0)
         
@@ -60,21 +61,21 @@ class Window_Main(Gtk.Window):
         cmdrun_box = Gtk.Box(spacing=4)
         box_v.pack_start(cmdrun_box, True, True, 0)
         
-        cmdrun_btn = Gtk.Button(label='Ejecutar Comando')
+        cmdrun_btn = Gtk.Button(label=f'{Lang("exec")} - {Lang("cmd")}')
         cmdrun_btn.connect('clicked', self.evt_command_run)
         cmdrun_box.pack_start(cmdrun_btn, True, True, 0)
         
         self.cmdrun_entry = Gtk.Entry()
-        self.cmdrun_entry.set_placeholder_text('Comando')
+        self.cmdrun_entry.set_placeholder_text(Lang("cmd"))
         cmdrun_box.pack_end(self.cmdrun_entry, True, True, 0)
         
         # Sección Vertical - Boton ver comandos
-        view_cmd_btn = Gtk.Button(label='Ver comandos creados')
+        view_cmd_btn = Gtk.Button(label=Lang('view_cfg'))
         view_cmd_btn.connect('clicked', self.evt_view_command)
         box_v.pack_start(view_cmd_btn, True, True, 0)
         
         # Sección Vertical - Boton exit
-        exit_btn = Gtk.Button(label='Salir')
+        exit_btn = Gtk.Button(label=Lang('exit') )
         exit_btn.connect('clicked', self.evt_exit)
         box_v.pack_end(exit_btn, True, True, 16)
         
@@ -140,7 +141,9 @@ class Dialog_Automatic(Gtk.Dialog):
         hbox_app_desktop = Gtk.Box(spacing=0)
         vbox.pack_start(hbox_app_desktop, True, True, 0)
         
-        self.CheckButton_app_desktop = Gtk.CheckButton(label='App Desktop')
+        self.CheckButton_app_desktop = Gtk.CheckButton(
+            label=Lang('app_desk')
+        )
         #self.CheckButton_app_desktop.set_active(True)
         hbox_app_desktop.pack_start(
             self.CheckButton_app_desktop, False, True, 0
@@ -173,7 +176,9 @@ class Dialog_Automatic(Gtk.Dialog):
         hbox_app_optional = Gtk.Box(spacing=64)
         vbox.pack_start(hbox_app_optional, True, True, 0)
         
-        self.CheckButton_app_optional = Gtk.CheckButton(label='App Optional')
+        self.CheckButton_app_optional = Gtk.CheckButton(
+            label=Lang('app_optional')
+        )
         #self.CheckButton_app_optional.set_active(True)
         hbox_app_optional.pack_start(self.CheckButton_app_optional, True, True, 0)
         
@@ -217,11 +222,11 @@ class Dialog_Automatic(Gtk.Dialog):
         hbox = Gtk.Box(spacing=64)
         vbox.pack_end(hbox, False, True, 0)
         
-        button_automatic = Gtk.Button(label='Iniciar')
+        button_automatic = Gtk.Button(label=Lang('start') )
         button_automatic.connect('clicked', self.evt_automatic)
         hbox.pack_start(button_automatic, False, True, 0)
         
-        button_exit = Gtk.Button(label='Salir')
+        button_exit = Gtk.Button(label=Lang('exit') )
         button_exit.connect('clicked', self.evt_exit)
         hbox.pack_end(button_exit, False, True, 0)
         
@@ -274,7 +279,10 @@ class Dialog_Automatic(Gtk.Dialog):
 
 class Dialog_Aptitude(Gtk.Dialog):
     def __init__(self, parent):
-        super().__init__(title='Aptitude Options', transient_for=parent, flags=0)
+        super().__init__(
+            title=f'Aptitude - {Lang("option")}',
+            transient_for=parent, flags=0
+        )
         self.set_resizable(False)
         self.set_default_size(256, -1)
         
@@ -283,12 +291,12 @@ class Dialog_Aptitude(Gtk.Dialog):
         box_v.set_property("expand", True)
         
         # Boton para Actualizar
-        update_button = Gtk.Button(label='Actualizar')
+        update_button = Gtk.Button(label=Lang('upd') )
         update_button.connect('clicked', self.evt_update)
         box_v.pack_start(update_button, True, False, 0)
         
         # Boton para Limpiar
-        clean_button = Gtk.Button(label='Limpiar Apps')
+        clean_button = Gtk.Button(label=Lang('cln') )
         clean_button.connect('clicked', self.evt_clean)
         box_v.pack_start(clean_button, True, False, 0)
         
@@ -296,28 +304,28 @@ class Dialog_Aptitude(Gtk.Dialog):
         box_h = Gtk.Box(spacing=4)
         box_v.pack_start(box_h, True, True, 0)
         
-        install_button = Gtk.Button(label='Instalar App')
+        install_button = Gtk.Button(label=Lang('install'))
         install_button.connect('clicked', self.evt_install)
         box_h.pack_start(install_button, True, True, 0)
         
         self.install_entry = Gtk.Entry()
-        self.install_entry.set_placeholder_text('Aplicación')
+        self.install_entry.set_placeholder_text(Lang('app'))
         box_h.pack_end(self.install_entry, False, True, 0)
         
         # Boton para Desinstalar app
         box_h = Gtk.Box(spacing=4)
         box_v.pack_start(box_h, True, True, 0)
         
-        purge_button = Gtk.Button(label='Purgar App')
+        purge_button = Gtk.Button(label=f'{Lang("prg")}')
         purge_button.connect('clicked', self.evt_purge)
         box_h.pack_start(purge_button, True, True, 0)
         
         self.purge_entry = Gtk.Entry()
-        self.purge_entry.set_placeholder_text('Aplicación')
+        self.purge_entry.set_placeholder_text(Lang('app'))
         box_h.pack_end(self.purge_entry, False, True, 0)
         
         # Sección final, salir
-        exit_button = Gtk.Button(label='Salir')
+        exit_button = Gtk.Button(label=Lang('exit') )
         exit_button.connect('clicked', self.evt_exit)
         box_v.pack_end(exit_button, True, False, 16)
         
@@ -389,7 +397,7 @@ class Dialog_TripleBuffer(Gtk.Dialog):
                   )
         label_command = Gtk.Label()
         label_command.set_markup(
-            f'<i>Comando: "{cmd}"</i>\n\n'
+            f'<i>{Lang("cmd")}: "{cmd}"</i>\n\n'
             f'<b>{cmd_run}</b>'
         )
         label_command.set_line_wrap(True)
@@ -397,15 +405,15 @@ class Dialog_TripleBuffer(Gtk.Dialog):
         label_command.set_selectable(True)
         box_v.pack_start(label_command, True, True, 8)
         
-        btn_GraphicAMD = Gtk.Button(label='Grafica AMD')
+        btn_GraphicAMD = Gtk.Button(label=Lang('gpc_amd') )
         btn_GraphicAMD.connect('clicked', self.evt_GraphicAMD)
         box_v.pack_start(btn_GraphicAMD, True, True, 0)
         
-        btn_GraphicIntel = Gtk.Button(label='Grafica Intel')
+        btn_GraphicIntel = Gtk.Button(label=Lang('gpc_intel') )
         btn_GraphicIntel.connect('clicked', self.evt_GraphicIntel)
         box_v.pack_start(btn_GraphicIntel, True, True, 0)
         
-        btn_none = Gtk.Button(label='Salir')
+        btn_none = Gtk.Button(label=Lang('exit') )
         btn_none.connect('clicked', self.evt_none)
         box_v.pack_end(btn_none, True, False, 16)
         
@@ -439,27 +447,27 @@ class Dialog_Application_Menu(Gtk.Dialog):
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         
         # Secciones Verticales - Opciones
-        button_App_Essential = Gtk.Button(label='Esensiales')
+        button_App_Essential = Gtk.Button(label=Lang('app_essential'))
         button_App_Essential.connect('clicked', self.evt_App_Essential)
         vbox.pack_start(button_App_Essential, True, True, 0)
         
-        button_App_Dependence = Gtk.Button(label='Dependencias')
+        button_App_Dependence = Gtk.Button(label=Lang('app_depens'))
         button_App_Dependence.connect('clicked', self.evt_App_Dependence)
         vbox.pack_start(button_App_Dependence, True, True, 0)
         
-        button_App_Uninstall = Gtk.Button(label='Desinstalar')
+        button_App_Uninstall = Gtk.Button(label=Lang('utll'))
         button_App_Uninstall.connect('clicked', self.evt_App_Uninstall)
         vbox.pack_start(button_App_Uninstall, True, True, 0)
         
-        button_App_Desktop = Gtk.Button(label='Escritorio')
+        button_App_Desktop = Gtk.Button(label=Lang('app_desk') )
         button_App_Desktop.connect('clicked', self.evt_App_Desktop)
         vbox.pack_start(button_App_Desktop, True, True, 0)
         
-        button_App_Optional = Gtk.Button(label='Opcionales')
+        button_App_Optional = Gtk.Button(label=Lang('app_optional') )
         button_App_Optional.connect('clicked', self.evt_App_Optional)
         vbox.pack_start(button_App_Optional, True, True, 0)
         
-        button_Exit = Gtk.Button(label='Salir')
+        button_Exit = Gtk.Button(label=Lang('exit') )
         button_Exit.connect('clicked', self.evt_Exit)
         vbox.pack_end(button_Exit, False, False, 16)
         
@@ -507,7 +515,7 @@ class Dialog_Application_Desktop(Gtk.Dialog):
         # Establecer Bara titular
         HeaderBar_title = Gtk.HeaderBar()
         HeaderBar_title.set_show_close_button(True)
-        HeaderBar_title.props.title = 'Aplicaciones Escritorio'
+        HeaderBar_title.props.title = Lang('app_desk')
         self.set_titlebar(HeaderBar_title)
         
         # Contenedor Principal
@@ -534,7 +542,7 @@ class Dialog_Application_Desktop(Gtk.Dialog):
         button_app_desktop.connect('clicked', self.evt_app_desktop)
         vbox.pack_start(button_app_desktop, True, True, 0)
         
-        button_exit = Gtk.Button(label='Salir')
+        button_exit = Gtk.Button(label=Lang('exit') )
         button_exit.connect('clicked', self.evt_exit)
         vbox.pack_end(button_exit, True, False, 16)
         
@@ -565,7 +573,7 @@ class Dialog_Application_Optional(Gtk.Dialog):
         # Barra titular 
         HeaderBar_title = Gtk.HeaderBar()
         HeaderBar_title.set_show_close_button(True)
-        HeaderBar_title.props.title = 'Aplicaciones Opcionales'
+        HeaderBar_title.props.title = Lang('app_optional')
         self.set_titlebar(HeaderBar_title)
         
         # Contnedor Principal
@@ -616,11 +624,11 @@ class Dialog_Application_Optional(Gtk.Dialog):
         except:
             pass
         
-        button_app_all = Gtk.Button(label='Todas las apps')
+        button_app_all = Gtk.Button(label=Lang('all_apps'))
         button_app_all.connect('clicked', self.evt_app_all)
         vbox.pack_start(button_app_all, False, False, 0)
         
-        button_exit = Gtk.Button(label='Salir')
+        button_exit = Gtk.Button(label=Lang('exit') )
         button_exit.connect('clicked', self.evt_exit)
         vbox.pack_end(button_exit, False, False, 16)
         
@@ -700,10 +708,10 @@ class Dialog_mouse_cfg(Gtk.Dialog):
             '50-mouse-acceleration.conf'
         ).exists():
             switch_acceleration.set_active(False)
-            self.label_acceleration.set_text('AccelerationOFF:')
+            self.label_acceleration.set_text(Lang("acclr_off") )
         else:
             switch_acceleration.set_active(True)
-            self.label_acceleration.set_text('AccelerationON')
+            self.label_acceleration.set_text(Lang("acclr_on") )
         switch_acceleration.connect('notify::active', self.evt_acceleration)
         hbox.pack_end(switch_acceleration, False, True, 0)
         
@@ -718,8 +726,8 @@ class Dialog_mouse_cfg(Gtk.Dialog):
             option = 'AccelerationOFF'
         self.label_acceleration.set_text(f'{option}:')
         Config_Save( Util_Debian.Mouse_Config( option ) )
-            
-        
+
+
 
 win = Window_Main()
 win.connect("destroy", Gtk.main_quit)

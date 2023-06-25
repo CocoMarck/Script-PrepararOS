@@ -1,5 +1,6 @@
 from Modulos import Modulo_Util as Util
 from Modulos import Modulo_Util_Debian as Util_Debian
+from Modulos.Modulo_Language import get_text as Lang
 import os, pathlib, subprocess
 
 
@@ -13,17 +14,17 @@ def Script_Menu():
     while loop == True:
         Util.CleanScreen()
         opc = input(
-            Util.Title(txt='Preparar Sistema', see=False) +
-            '1. Automatico\n'
-            '2. Aplicaciones\n'
+            Util.Title(txt=Lang('prepar_sys'), see=False) +
+            f'1. {Lang("auto")}\n'
+            f'2. {Lang("app_menu")}\n'
             '3. Aptitude\n'
-            '4. Repositorios no libres\n'
-            '5. Activar Triple buffer\n'
-            '6. Configuración de Mouse\n'
-            '7. Ejecutar Comando\n'
-            '9. Ver comandos creados\n'
-            '0. Salir\n'
-            'Elige una opción: '
+            f'4. {Lang("repos_nonfree")}\n'
+            f'5. {Lang("on_3_buffer")}\n'
+            f'6. {Lang("cfg_mouse")}\n'
+            f'7. {Lang("exec_cmd")}\n'
+            f'9. {Lang("view_cfg")}\n'
+            f'0. {Lang("exit")}\n'
+            f'{Lang("set_option")}: '
         )
         
         if (
@@ -58,13 +59,13 @@ def Script_Menu():
         
         elif opc == '2':
             opc = input(
-                Util.Title('Aplicaciones', see=False) +
-                '1. Necesarias\n'
-                '2. Dependencias\n'
-                '3. Desinstalar\n'
-                '4. Escritorio\n'
-                '5. Opcionales\n'
-                'Elige una opción: '
+                Util.Title(Lang("app_menu"), see=False) +
+                f'1. {Lang("essential")}\n'
+                f'2. {Lang("depens")}\n'
+                f'3. {Lang("utll")}\n'
+                f'4. {Lang("desk")}\n'
+                f'5. {Lang("optional")}\n'
+                f'{Lang("set_option")}: '
             )
             
             go = Util.Continue()
@@ -93,10 +94,13 @@ def Script_Menu():
                 cfg_save = False
         
         elif opc == '3':
-            opc = input(Util.Title(txt='Opciones aptitude', see=False) +
-                '1. Actualizar\n'
-                '2. Limpiar\n'
-                'Elige una opción: ') 
+            opc = input(Util.Title(
+                    txt='Aptitude',
+                    see=False
+                ) +
+                f'1. {Lang("upd")}\n'
+                f'2. {Lang("cln")}\n'
+                f'{Lang("set_option")}: ') 
             
             if opc == '1':
                 cfg = Util_Debian.Aptitude('update')
@@ -119,7 +123,7 @@ def Script_Menu():
             
         elif opc == '7':
             cfg_save = False
-            cmd = input('Comando: ')
+            cmd = input(f'{Lang("cmd")}: ')
             if cmd == '':
                 pass
             else:
@@ -129,12 +133,12 @@ def Script_Menu():
             cfg_save = False
             input(
                 Util.Text_Read(cfg_file) + '\n\n'
-                'Preciona enter para continuar...'
+                f'{Lang("continue_enter")}...'
             )
             
         elif opc == '0':
             cfg_save, loop = False, False
-            print('Hasta la proxima.')
+            print(f'{Lang("bye")}...')
             
         elif opc == None:
             cfg_save = False
@@ -153,9 +157,9 @@ def Script_Menu():
 
             else:
                 opc = Util.Continue(
-                    'Esta es tu configuración: \n\n' + cfg + '\n' +
+                    f'{Lang("cfg")}: \n\n' + cfg + '\n' +
                     Util.Separator(see=False) + '\n'
-                    '¿Continuar?'
+                    f'¿{Lang("continue")}?'
                 )
                 
                 if opc == 's':
@@ -164,7 +168,7 @@ def Script_Menu():
                         file_cfg.write(
                             cfg + '\n' + Util.Separator(see=False) + '\n'
                         )
-                    input('Precione enter para continuar...')
+                    input(f'{Lang("continue_enter")}...')
 
                 elif opc == 'n':
                     pass
@@ -177,13 +181,13 @@ def App_Menu(opc='Desktop', txt=''):
     Util.CleanScreen()
     if opc == 'Desktop':
         opc = input(
-            Util.Title(f'Aplicaciones de Escritorio', see=False) +
+            Util.Title(Lang('app_desk'), see=False) +
             '1. Xfce4\n'
             '2. KDE Plasma\n'
             '3. Gnome 3\n'
             '4. LXDE\n'
             '5. Mate\n'
-            'Elige una opción: '
+            f'{Lang("set_option")}: '
         )
         
         if opc == '1':
@@ -240,10 +244,10 @@ def App_Menu(opc='Desktop', txt=''):
                 dict_archive.update({number : archive})
                 
             opc = int(input(
-                Util.Title(f'Aplicaciones Opcionales', see=False) +
+                Util.Title(Lang('app_optional'), see=False) +
                 menu_archive +
-                f'{number+1}. Todas las aplicaciones\n'
-                'Elige una opción: '
+                f'{number+1}. {Lang("all_apps")}\n'
+                f'{Lang("set_option")}: '
             ))
             
             if opc in dict_archive:
@@ -298,17 +302,17 @@ def Triple_Buffer(txt=''):
     )
     
     print(
-        f'Comando para ver driver de grafica: "{cmd}"\n'
+        f'{Lang("cmd")}: "{cmd}"\n'
         '\n' +
         cmd_run + '\n'
     )
 
     opc = input(
-        Util.Title('Activar TripleBuffer', see=False) +
-        '1. Grafica AMD\n'
-        '2. Grafica Intel\n'
-        '0. No hacer nada\n'
-        'Elige una opcion: '
+        Util.Title(Lang('on_3_buffer'), see=False) +
+        f'1. {Lang("gpc_amd")}\n'
+        f'2. {Lang("gpc_intel")}\n'
+        f'0. {Lang("do_none")}\n'
+        f'{Lang("set_option")}: '
     )
     
     if opc == '1':
@@ -338,19 +342,19 @@ def Triple_Buffer(txt=''):
     
 
 def Mouse_Config():
-    Util.Title('Configuración de Mouse')
+    Util.Title( Lang('cfg_mouse') )
 
     if pathlib.Path(
         '/usr/share/X11/xorg.conf.d/'
         '50-mouse-acceleration.conf'
     ).exists():
-        option = Util.Continue('AccelerationOFF ¿Activar?')
+        option = Util.Continue(f'{Lang("acclr_off")} ¿{Lang("on")}?')
         if option == 's':
             option = Util_Debian.Mouse_Config('AccelerationON')
         elif option == 'n':
             option = ''
     else:
-        option = Util.Continue('AccelerationON ¿Desactivar?')
+        option = Util.Continue(f'{Lang("acclr_on")} ¿{Lang("off")}?')
         if option == 's':
             option = Util_Debian.Mouse_Config('AccelerationOFF')
         elif option == 'n':

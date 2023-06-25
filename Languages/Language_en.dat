@@ -3,7 +3,7 @@ set_lang=
 
 # Idioma Ingles
 # en - Options
-option=Select an option
+option=Option
 exit=Exit
 continue=Continue
 continue_enter=Press enter and continue
@@ -19,6 +19,20 @@ rec_audio=Record Audio
 mode=Mode
 set_option=Select an option
 save_arch=Save File
+on_3_buffer=Active Triple buffer
+gpc_amd=AMD Graphics
+gpc_intel=Intel Graphics
+upd=Update
+cln=Clean
+prg=Purge
+utll=Uninstall
+auto=Automatic
+app_menu=Applications Menu
+app_desk=Desktop Application
+app_optional=Optional Application
+app_depens=Application dependencies
+app_essential=Essential applications
+all_apps=All applications
 
 # en - Finalized
 finalized=Finalized
@@ -66,3 +80,20 @@ cpu_use=CPU usage
 set_arch=Set the file
 no_arch=Don't file
 see_options=See the all options
+repos_nonfree=Non-free Repositories
+acclr_on=Acceleration Enabled
+acclr_off=Acceleration Off
+cfg_mouse=Mouse Configuration
+exec_cmd=Execute command
+
+desk=Desktop
+optional=Optional
+depens=Dependencies
+essential=Essential
+
+prepar_sys=Prepare system
+
+do_none=Do nothing
+
+on=Activate
+off=Deactivate

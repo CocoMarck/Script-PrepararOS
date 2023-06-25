@@ -1,6 +1,6 @@
 # Español
 # es - Opciones
-option=Selecciona una opción
+option=Opción
 exit=Salir
 continue=Continuar
 continue_enter=Preciona enter para continuar
@@ -16,6 +16,20 @@ rec_audio=Grabar Audio
 mode=Modo
 set_option=Selecciona una opción
 save_arch=Guardar archivo
+on_3_buffer=Activar Triple buffer
+gpc_amd=Gráfica AMD
+gpc_intel=Gráfica Intel
+upd=Actualizar
+cln=Limpiar
+prg=Purgar
+utll=Desinstalar
+auto=Automatico
+app_menu=Menu de aplicaciónes
+app_desk=Aplicación de Escritorio
+app_optional=Aplicación Opcional
+app_depens=Dependencias de aplicaciones
+app_essential=Aplicaciones esenciales
+all_apps=Todas las aplicaciones
 
 # es - Finalizado
 finalized=Finalizado
@@ -63,3 +77,20 @@ cpu_use=Uso de CPU
 set_arch=Establesca el archivo
 no_arch=Sin archivo
 see_options=Mira todas las opciones
+repos_nonfree=Repositorios no libres
+acclr_on=Aceleración activada
+acclr_off=Aceleración desactivada
+cfg_mouse=Configuración de mouse
+exec_cmd=Ejecutar comando
+
+desk=Escritorio
+optional=Opcional
+depens=Dependencias
+essential=Esencial
+
+prepar_sys=Preparar sistema
+
+do_none=No hacer nada
+
+on=Activar
+off=Desactivar
