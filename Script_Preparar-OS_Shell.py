@@ -152,8 +152,13 @@ def Script_Menu():
             
         elif opc == '9':
             cfg_save = False
+            text_read = Text_Read(cfg_file)
+            if text_read == None:
+                text_read = 'ERROR'
+            else:
+                pass
             input(
-                Text_Read(cfg_file) + '\n\n'
+                text_read + '\n\n'
                 f'{Lang("continue_enter")}...'
             )
             

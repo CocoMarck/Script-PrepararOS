@@ -131,8 +131,13 @@ class Window_Main(Gtk.Window):
             )
         
     def evt_view_command(self, widget):
+        text_read = Text_Read(cfg_file)
+        if text_read == None:
+            text_read = 'ERROR'
+        else:
+            pass
         dialog = Util_Gtk.Dialog_TextView(self,
-                     text=Text_Read(cfg_file, 'ModeText')
+                     text=text_read
                  )
         dialog.run()
         dialog.destroy()
