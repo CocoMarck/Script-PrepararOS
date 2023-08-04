@@ -1,4 +1,21 @@
-from Modulos import Modulo_Util as Util
+from Modulos.Modulo_ShowPrint import(
+    Title,
+    Separator,
+    Continue
+)
+
+from Modulos.Modulo_System import(
+    CleanScreen,
+    Command_Run
+)
+
+from Modulos.Modulo_Text import(
+    Text_Read
+)
+
+from Modulos.Modulo_Files import(
+    Files_List
+)
 from Modulos import Modulo_Util_Debian as Util_Debian
 from Modulos.Modulo_Language import get_text as Lang
 import os, pathlib, subprocess
@@ -12,9 +29,9 @@ def Script_Menu():
     
     loop = True
     while loop == True:
-        Util.CleanScreen()
+        CleanScreen()
         opc = input(
-            Util.Title(txt=Lang('prepar_sys'), see=False) +
+            Title(text=Lang('prepar_sys'), print_mode=False) +
             f'1. {Lang("auto")}\n'
             f'2. {Lang("app_menu")}\n'
             '3. Aptitude\n'
@@ -38,7 +55,7 @@ def Script_Menu():
             opc == '9' or
             opc == '0'
         ):
-            go = Util.Continue()
+            go = Continue()
             if go == 's':
                 pass
             elif go == 'n':
@@ -59,7 +76,7 @@ def Script_Menu():
         
         elif opc == '2':
             opc = input(
-                Util.Title(Lang("app_menu"), see=False) +
+                Title(Lang("app_menu"), print_mode=False) +
                 f'1. {Lang("essential")}\n'
                 f'2. {Lang("depens")}\n'
                 f'3. {Lang("utll")}\n'
@@ -68,7 +85,7 @@ def Script_Menu():
                 f'{Lang("set_option")}: '
             )
             
-            go = Util.Continue()
+            go = Continue()
             if go == 's':
                 pass
             elif go == 'n':
@@ -90,13 +107,13 @@ def Script_Menu():
                 cfg = App_Menu('Optional')
             
             else:
-                Util.Continue(msg=True)
+                Continue(message_error=True)
                 cfg_save = False
         
         elif opc == '3':
-            opc = input(Util.Title(
-                    txt='Aptitude',
-                    see=False
+            opc = input(Title(
+                    text='Aptitude',
+                    print_mode=False
                 ) +
                 f'1. {Lang("upd")}\n'
                 f'2. {Lang("cln")}\n'
@@ -109,7 +126,7 @@ def Script_Menu():
                 cfg = Util_Debian.Aptitude('clean')
             
             else:
-                Util.Continue(msg=True)
+                Continue(message_error=True)
                 cfg_save = False
             
         elif opc == '4':
@@ -127,12 +144,16 @@ def Script_Menu():
             if cmd == '':
                 pass
             else:
-                Util.Command_Run( cmd=cmd )
+                Command_Run( 
+                    cmd=cmd,
+                    open_new_terminal=False,
+                    text_input=Lang('continue_enter')
+                )
             
         elif opc == '9':
             cfg_save = False
             input(
-                Util.Text_Read(cfg_file) + '\n\n'
+                Text_Read(cfg_file) + '\n\n'
                 f'{Lang("continue_enter")}...'
             )
             
@@ -147,28 +168,31 @@ def Script_Menu():
         else:
             cfg_save = False
             cfg = err + '\n\n'
-            Util.Continue(msg=True)
+            Continue(message_error=True)
             
         if cfg_save == True:
 
-            Util.CleanScreen()
+            CleanScreen()
             if cfg == '': 
                 pass
 
             else:
-                opc = Util.Continue(
+                opc = Continue(
                     f'{Lang("cfg")}: \n\n' + cfg + '\n' +
-                    Util.Separator(see=False) + '\n'
+                    Separator(print_mode=False) + '\n'
                     f'¿{Lang("continue")}?'
                 )
                 
                 if opc == 's':
-                    Util.Command_Run(cfg)
+                    Command_Run(
+                        cfg, open_new_terminal=False,
+                        text_input=Lang('continue_enter')
+                    )
                     with open(cfg_file, 'a') as file_cfg:
                         file_cfg.write(
-                            cfg + '\n' + Util.Separator(see=False) + '\n'
+                            cfg + '\n' + Separator(print_mode=False) + '\n'
                         )
-                    input(f'{Lang("continue_enter")}...')
+                    #input(f'{Lang("continue_enter")}...')
 
                 elif opc == 'n':
                     pass
@@ -178,10 +202,10 @@ def Script_Menu():
                     
 
 def App_Menu(opc='Desktop', txt=''):
-    Util.CleanScreen()
+    CleanScreen()
     if opc == 'Desktop':
         opc = input(
-            Util.Title(Lang('app_desk'), see=False) +
+            Title(Lang('app_desk'), print_mode=False) +
             '1. Xfce4\n'
             '2. KDE Plasma\n'
             '3. Gnome 3\n'
@@ -228,7 +252,7 @@ def App_Menu(opc='Desktop', txt=''):
             
         try:
             path_app_optional = 'Script_Apps/App_Optional/'
-            archives = Util.Files_List(
+            archives = Files_List(
                 files='App_Optional-*.txt',
                 path=path_app_optional,
                 remove_path=True
@@ -244,7 +268,7 @@ def App_Menu(opc='Desktop', txt=''):
                 dict_archive.update({number : archive})
                 
             opc = int(input(
-                Util.Title(Lang('app_optional'), see=False) +
+                Title(Lang('app_optional'), print_mode=False) +
                 menu_archive +
                 f'{number+1}. {Lang("all_apps")}\n'
                 f'{Lang("set_option")}: '
@@ -284,7 +308,7 @@ def App_Menu(opc='Desktop', txt=''):
                 cfg = ''
                 
         except:
-            Util.Continue(msg=True)
+            Continue(message_error=True)
             cfg = ''
 
     else:
@@ -308,7 +332,7 @@ def Triple_Buffer(txt=''):
     )
 
     opc = input(
-        Util.Title(Lang('on_3_buffer'), see=False) +
+        Title(Lang('on_3_buffer'), print_mode=False) +
         f'1. {Lang("gpc_amd")}\n'
         f'2. {Lang("gpc_intel")}\n'
         f'0. {Lang("do_none")}\n'
@@ -335,26 +359,26 @@ def Triple_Buffer(txt=''):
         cfg = ''
         
     else:
-        Util.Continue(msg=True)
+        Continue(message_error=True)
         cfg = ''
         
     return cfg
     
 
 def Mouse_Config():
-    Util.Title( Lang('cfg_mouse') )
+    Title( Lang('cfg_mouse') )
 
     if pathlib.Path(
         '/usr/share/X11/xorg.conf.d/'
         '50-mouse-acceleration.conf'
     ).exists():
-        option = Util.Continue(f'{Lang("acclr_off")} ¿{Lang("on")}?')
+        option = Continue(f'{Lang("acclr_off")} ¿{Lang("on")}?')
         if option == 's':
             option = Util_Debian.Mouse_Config('AccelerationON')
         elif option == 'n':
             option = ''
     else:
-        option = Util.Continue(f'{Lang("acclr_on")} ¿{Lang("off")}?')
+        option = Continue(f'{Lang("acclr_on")} ¿{Lang("off")}?')
         if option == 's':
             option = Util_Debian.Mouse_Config('AccelerationOFF')
         elif option == 'n':

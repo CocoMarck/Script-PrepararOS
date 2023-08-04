@@ -5,8 +5,14 @@ bijiben                         # Notas Gnome
 gvfs-backends                   # Para acceder al celular desde thunar
 menulibre                       # Para administrar los accesos.desktop
 gnome-software                  # Tienda de apps Gnome
-blueman                         # Gestor bluetooth
 atril                           # Ver PDF
 file-roller                     # Para abrir los comprimidos
 xfce4-goodies                   # Utilirias para xfce4
 lightdm-gtk-greeter-settings    # Para adminisrtrar lighdm
+
+bluez                   # Bluetooth
+dbus                    # Bluetooth
+blueman                 # Bluetooth
+pipewire                # Bluetooth
+pulseaudio              # Bluetooth
+libspa-0.2-bluetooth    # Bluetooth

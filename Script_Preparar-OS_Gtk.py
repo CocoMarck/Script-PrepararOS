@@ -1,4 +1,14 @@
-from Modulos import Modulo_Util as Util
+from Modulos.Modulo_System import(
+    Command_Run
+)
+
+from Modulos.Modulo_Text import(
+    Text_Read
+)
+
+from Modulos.Modulo_Files import(
+    Files_List
+)
 from Modulos import Modulo_Util_Debian as Util_Debian
 from Interface import Modulo_Util_Gtk as Util_Gtk
 from Modulos.Modulo_Language import get_text as Lang
@@ -114,11 +124,15 @@ class Window_Main(Gtk.Window):
         if self.cmdrun_entry.get_text() == '':
             pass
         else:
-            Util.Command_Run( self.cmdrun_entry.get_text() )
+            Command_Run( 
+                cmd=self.cmdrun_entry.get_text(),
+                open_new_terminal=True,
+                text_input=Lang('continue_enter')
+            )
         
     def evt_view_command(self, widget):
         dialog = Util_Gtk.Dialog_TextView(self,
-                     text=Util.Text_Read(cfg_file, 'ModeText')
+                     text=Text_Read(cfg_file, 'ModeText')
                  )
         dialog.run()
         dialog.destroy()
@@ -199,7 +213,7 @@ class Dialog_Automatic(Gtk.Dialog):
 
         liststore_app_optional = Gtk.ListStore(str)
         self.path_app_optional = f'{cfg_dir}App_Optional/'
-        archives = Util.Files_List(
+        archives = Files_List(
             files='App_Optional-*.txt',
             path=self.path_app_optional,
             remove_path=True
@@ -605,7 +619,7 @@ class Dialog_Application_Optional(Gtk.Dialog):
             scroll_button.add(vbox_scroll)
         
             self.path_app_optional = f'{cfg_dir}App_Optional/'
-            archives = Util.Files_List(
+            archives = Files_List(
                 files='App_Optional-*.txt',
                 path=self.path_app_optional,
                 remove_path=True
@@ -722,9 +736,11 @@ class Dialog_mouse_cfg(Gtk.Dialog):
     def evt_acceleration(self, switch, gparam):
         if switch.get_active():
             option = 'AccelerationON'
+            acclr_text = Lang('acclr_on')
         else:
             option = 'AccelerationOFF'
-        self.label_acceleration.set_text(f'{option}:')
+            acclr_text = Lang('acclr_off')
+        self.label_acceleration.set_text(f'{acclr_text}:')
         Config_Save( Util_Debian.Mouse_Config( option ) )
 
 

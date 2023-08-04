@@ -18,10 +18,3 @@ gnome-disk-utility      # Para gestionar y ver estadisticas del disco duro
 redshift-gtk            # Para activar modo luz nocturna
 gparted                 # Gestor de particiones
 texlive                 # Para mostrar matematicas de forma adecuada
-
-bluez                   # Bluetooth
-dbus                    # Bluetooth
-blueman                 # Bluetooth
-pipewire                # Bluetooth
-pulseaudio              # Bluetooth
-libspa-0.2-bluetooth    # Bluetooth
