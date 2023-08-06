@@ -322,7 +322,7 @@ def Mouse_Config(opc='', txt=''):
     file_remove = f'sudo rm {path}*mouse-acceleration*.conf &&\n'
     
     if opc == 'AccelerationON':
-        file_copy = '# Acceleration ON'
+        file_copy = f'echo "{opc}"'
 
     elif opc == 'AccelerationOFF':
         with open(file_txt, "w") as file_txt:
