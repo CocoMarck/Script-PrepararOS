@@ -77,13 +77,13 @@ class Window_Main(QWidget):
         vbox_main.addWidget(button_repo)
         
         button_3_buffer = QPushButton( Lang('on_3_buffer') )
-        #button_3_buffer.clicked.connect(self.evt_triple_buffer)
+        button_3_buffer.clicked.connect(self.evt_triple_buffer)
         vbox_main.addWidget(button_3_buffer)
         
         button_mouse_cfg = QPushButton(
             f'{Lang("cfg")} - Mouse'
         )
-        #button_mouse_cfg.clicked.connect(self.evt_mouse_cfg)
+        button_mouse_cfg.clicked.connect(self.evt_mouse_cfg)
         vbox_main.addWidget(button_mouse_cfg)
         
         # Seccion Vertical - Ejecutar comando
@@ -121,6 +121,20 @@ class Window_Main(QWidget):
         #vbox_main.addWidget(button_exit)
         
         # Fin, mostrar ventana
+        self.show()
+    
+    def evt_mouse_cfg(self):
+        self.hide()
+        Dialog_mouse_config(
+            parent=self
+        ).exec()
+        self.show()
+    
+    def evt_triple_buffer(self):
+        self.hide()
+        Dialog_TripleBuffer(
+            parent=self
+        ).exec()
         self.show()
     
     def evt_application(self):
@@ -475,6 +489,114 @@ class Dialog_app_optional(QDialog):
         Config_Save(
             parent=self,
             cfg=app_all
+        )
+    
+class Dialog_TripleBuffer(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        self.setWindowTitle( 'Triple Buffer Config' )
+        self.resize(308, 256)
+        
+        # Contenedor principal
+        vbox_main = QVBoxLayout()
+        self.setLayout(vbox_main)
+        
+        # Secciones Vertical - Comando para ver Triple Buffer
+        command = 'grep drivers /var/log/Xorg.0.log'
+        command_run = subprocess.check_output(
+            command, shell=True, text=True
+        )
+        label_command = QLabel(
+            f'<i>{Lang("cmd")}: "{command}</i>\n'
+            '\n'
+            f'<b>{command_run}</b>'
+        )
+        label_command.setTextInteractionFlags(
+            Qt.TextInteractionFlag.TextSelectableByMouse |
+            Qt.TextInteractionFlag.TextSelectableByKeyboard
+        )
+        label_command.setWordWrap(True)
+        vbox_main.addWidget(label_command)
+        
+        # Secciones Verticales - Botones
+        list_graphics = [
+            Lang('gpc_amd'),
+            Lang('gpc_intel')
+        ]
+        for graphic in list_graphics:
+            button_graphic = QPushButton(graphic)
+            button_graphic.clicked.connect(
+                partial(
+                    self.evt_TripleBuffer_graphic, button=button_graphic
+                )
+            )
+            vbox_main.addWidget(button_graphic)
+    
+    def evt_TripleBuffer_graphic(self, button):
+        dict_graphics = {
+            Lang('gpc_amd'): '20-radeon.conf',
+            Lang('gpc_intel'): '20-intel-gpu.conf'
+        }
+        
+        if button.text() in dict_graphics:
+            graphic = dict_graphics[button.text()]
+
+            Config_Save(
+                parent=self,
+                cfg=Util_Debian.TripleBuffer(graphic)
+            )
+        else:
+            pass
+            #graphic = button.text()
+
+
+class Dialog_mouse_config(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        self.setWindowTitle('Mouse Config')
+        self.resize(256, 128)
+        
+        # Contenedor Principal
+        vbox_main = QVBoxLayout()
+        self.setLayout(vbox_main)
+        
+        # Seccion Vertical - Aceleración - Activar/Desactivar
+        hbox = QHBoxLayout()
+        vbox_main.addLayout(hbox)
+        
+        button_acceleration = QPushButton()
+        button_acceleration.setCheckable(True)
+        button_acceleration.clicked.connect(
+            partial(
+                self.evt_mouse_acceleration_onoff,
+                button=button_acceleration
+            )
+        )
+        hbox.addWidget(button_acceleration)
+        
+        if Path(
+            '/usr/share/X11/xorg.conf.d/'
+            '50-mouse-acceleration.conf'
+        ).exists():
+            button_acceleration.setChecked(False)
+            button_acceleration.setText(Lang("acclr_off"))
+        else:
+            button_acceleration.setChecked(True)
+            button_acceleration.setText(Lang("acclr_on"))
+    
+    def evt_mouse_acceleration_onoff(self, button):
+        if button.isChecked() == True:
+            option = 'AccelerationON'
+            button.setText( Lang('acclr_on') )
+        else:
+            option = 'AccelerationOFF'
+            button.setText( Lang('acclr_off') )
+
+        Config_Save( 
+            parent=self,
+            cfg=Util_Debian.Mouse_Config(option)
         )
 
 
