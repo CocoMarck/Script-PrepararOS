@@ -26,6 +26,8 @@ from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QLineEdit,
+    QCheckBox,
+    QComboBox,
     QVBoxLayout,
     QHBoxLayout,
 )
@@ -61,7 +63,7 @@ class Window_Main(QWidget):
         vbox_main.addStretch()
         
         button_auto = QPushButton( Lang('auto') )
-        #button_auto.clicked.connect(self.evt_automatic)
+        button_auto.clicked.connect(self.evt_automatic)
         vbox_main.addWidget(button_auto)
         
         button_apps = QPushButton( Lang('app_menu') )
@@ -123,6 +125,13 @@ class Window_Main(QWidget):
         # Fin, mostrar ventana
         self.show()
     
+    def evt_automatic(self):
+        self.hide()
+        Dialog_Automatic(
+            parent=self
+        ).exec()
+        self.show()
+    
     def evt_mouse_cfg(self):
         self.hide()
         Dialog_mouse_config(
@@ -179,6 +188,131 @@ class Window_Main(QWidget):
     
     #def evt_exit(self):
     #    self.close()
+
+
+class Dialog_Automatic(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        self.setWindowTitle('Automatic Mode')
+        self.resize(512, 128)
+        
+        # Contenedor principal
+        vbox_main = QVBoxLayout()
+        self.setLayout(vbox_main)
+        
+        # Seccion Vertical - Opción escritorio
+        hbox = QHBoxLayout()
+        vbox_main.addLayout(hbox)
+        
+        self.checkbox_app_desktop = QCheckBox(Lang('app_desk'))
+        hbox.addWidget(self.checkbox_app_desktop)
+        
+        hbox.addStretch()
+        
+        self.combobox_app_desktop = QComboBox()
+        some_desktops = [
+            'Desktop-xfce4',
+            'Desktop-kdeplasma',
+            'Desktop-gnome3',
+            'Desktop-lxde',
+            'Desktop-mate'
+        ]
+        for desktop in some_desktops:
+            self.combobox_app_desktop.addItem(desktop)
+        hbox.addWidget(self.combobox_app_desktop)
+        
+        # Seccion Vertical - Opción apps opcionales
+        hbox = QHBoxLayout()
+        vbox_main.addLayout(hbox)
+        
+        self.checkbox_app_optional = QCheckBox(Lang('app_optional'))
+        hbox.addWidget(self.checkbox_app_optional)
+        
+        hbox.addStretch()
+        
+        self.combobox_app_optional = QComboBox()
+        self.path_app_optional = f'{cfg_dir}App_Optional/'
+        if(
+            Path(
+                self.path_app_optional +
+                'App_Optional-wine.txt'
+            ).exists() or
+            Path(
+                self.path_app_optional +
+                'App_Optional-flatpak.txt'
+            ).exists() or
+            Path(
+                self.path_app_optional +
+                'App_Optional-woeusb-ng.txt'
+            ).exists()
+        ):
+            pass
+        else:
+            Util_Debian.App('Optional-wine')
+            Util_Debian.App('Optional-flatpak')
+            Util_Debian.App('Optional-woeusb-ng')
+        
+        archives = Files_List(
+            files='App_Optional-*.txt',
+            path=self.path_app_optional,
+            remove_path=True
+        )
+        for app_optional in archives:
+            self.combobox_app_optional.addItem(app_optional)
+        hbox.addWidget(self.combobox_app_optional)
+        
+        # Seccion Vertical final - Iniciar
+        vbox_main.addStretch()
+        
+        button_start = QPushButton(Lang('start'))
+        button_start.clicked.connect(self.evt_start_automatic_mode)
+        vbox_main.addWidget(button_start)
+    
+    def evt_start_automatic_mode(self):
+        # Si este el checkbox desktop en True
+        config_apps = ''
+        if self.checkbox_app_desktop.isChecked() == True:
+            config_apps += Util_Debian.App(
+                self.combobox_app_desktop.currentText(),
+                '&&\n\n'
+            )
+        else:
+            pass
+        
+        # Si el checkbox app optional esta en True
+        if self.checkbox_app_optional.isChecked() == True:
+            config_apps += Util_Debian.App(
+                txt='&&\n\n',
+                txt_title=(
+                    f'{Lang("app")} / '
+                    f'{self.combobox_app_optional.currentText()}'
+                ),
+                txt_add='',
+                cfg_dir='./',
+                cfg_file=(
+                    self.path_app_optional +
+                    self.combobox_app_optional.currentText()
+                ),
+                opc='continue'
+            )
+        else:
+            pass
+        #config_apps = config_apps[:-4]
+        print(config_apps)
+        
+        # Configuracion esencial, obligatoria
+        Config_Save(
+            parent=self,
+            cfg=(
+                Util_Debian.Aptitude('update') + '&&\n\n' +
+                Util_Debian.App('Essential', '&&\n\n') +
+                Util_Debian.App('Dependence', '&&\n\n') +
+                Util_Debian.App('Uninstall', '&&\n\n') +
+                config_apps +
+                Util_Debian.Aptitude('clean')
+            )
+        )
 
 
 class Dialog_Aptitude(QDialog):
