@@ -54,7 +54,7 @@ class Window_Main(Gtk.Window):
         vbox_main.pack_start(button_apps, True, False, 0)
         
         button_apt = Gtk.Button( label='Aptitude' )
-        #button_apt.connect('clicked', self.evt_aptitude)
+        button_apt.connect('clicked', self.evt_aptitude)
         vbox_main.pack_start(button_apt, True, False, 0)
         
         button_repo = Gtk.Button( label=Lang('repos_nonfree') )
@@ -62,7 +62,7 @@ class Window_Main(Gtk.Window):
         vbox_main.pack_start(button_repo, True, False, 0)
         
         button_3_buffer = Gtk.Button( label=Lang('on_3_buffer') )
-        #button_3_buffer.connect('clicked', self.evt_triple_buffer)
+        button_3_buffer.connect('clicked', self.evt_triple_buffer)
         vbox_main.pack_start(button_3_buffer, True, False, 0)
         
         button_mouse_cfg = Gtk.Button( label=f'{Lang("cfg")} - Mouse' )
@@ -90,6 +90,20 @@ class Window_Main(Gtk.Window):
         
         # Fin, mostrar todo
         self.add(vbox_main)
+        
+    def evt_aptitude(self, widget):
+        dialog = Dialog_Aptitude(parent=self)
+        self.hide()
+        dialog.run()
+        dialog.destroy()
+        self.show_all()
+    
+    def evt_triple_buffer(self, widget):
+        dialog = Dialog_TripleBuffer(parent=self)
+        self.hide()
+        dialog.run()
+        dialog.destroy()
+        self.show_all()
     
     def evt_repository(self, widget):
         Config_Save(
@@ -123,8 +137,166 @@ class Window_Main(Gtk.Window):
         self.hide()
         dialog.run()
         dialog.destroy()
-
         self.show_all()
+
+
+class Dialog_Aptitude(Gtk.Dialog):
+    def __init__(self, parent=None):
+        super().__init__(
+            title='Aptitude',
+            transient_for=parent,
+            flags=0
+        )
+        
+        self.set_resizable(True)
+        self.set_default_size(308, 0)
+        
+        # Contenedor principal
+        vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        vbox_main.set_property('expand', True)
+        
+        # Secciones Verticales - Botones actualizar y limpiar
+        button_update = Gtk.Button( label=Lang('upd') )
+        button_update.connect('clicked', self.evt_apt_update)
+        vbox_main.pack_start(button_update, False, False, 0)
+        
+        button_clean = Gtk.Button( label=Lang('cln') )
+        button_clean.connect('clicked', self.evt_apt_clean)
+        vbox_main.pack_start(button_clean, False, False, 0)
+        
+        # Seccion Vertical - Boton Instalar paquete
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        vbox_main.pack_start(hbox, True, False, 0)
+
+        button_install = Gtk.Button( label=Lang('install') )
+        button_install.connect('clicked', self.evt_apt_app_install)
+        hbox.pack_start(button_install, False, False, 0)
+        
+        self.entry_install = Gtk.Entry()
+        self.entry_install.set_placeholder_text( Lang('app') )
+        self.entry_install.connect('activate', self.evt_apt_app_install)
+        hbox.pack_end(self.entry_install, False, False, 0)
+        
+        # Seccion Vertical - Boton eliminar paquete
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        vbox_main.pack_start(hbox, True, False, 0)
+
+        button_purge = Gtk.Button( label=Lang('prg') )
+        button_purge.connect('clicked', self.evt_apt_app_purge)
+        hbox.pack_start(button_purge, False, False, 0)
+        
+        self.entry_purge = Gtk.Entry()
+        self.entry_purge.set_placeholder_text( Lang('app') )
+        self.entry_purge.connect('activate', self.evt_apt_app_purge)
+        hbox.pack_end(self.entry_purge, False, False, 0)
+        
+        # Fin, mostrar dialogo
+        self.get_content_area().add(vbox_main)
+        self.show_all()
+    
+    def evt_apt_update(self, widget):
+        Config_Save(
+            parent=self,
+            cfg=Util_Debian.Aptitude('update')
+        )
+        
+    def evt_apt_clean(self, widget):
+        Config_Save(
+            parent=self,
+            cfg=Util_Debian.Aptitude('clean')
+        )
+    
+    def evt_apt_app_install(self, widget):
+        app_to_install = self.entry_install.get_text()
+        if not app_to_install == '':
+            Config_Save(
+                parent=self,
+                cfg = (
+                    'sudo apt update &&\n\n' +
+                    Util_Debian.Aptitude('install') +
+                    app_to_install
+                )
+            )
+    
+    def evt_apt_app_purge(self, widget):
+        app_to_purge = self.entry_purge.get_text()
+        if not app_to_purge == '':
+            Config_Save(
+                parent=self,
+                cfg = (
+                    Util_Debian.Aptitude('purge') +
+                    app_to_purge + ' &&\n\n'
+                    'sudo apt autoremove ' +
+                    app_to_purge + ' &&\n\n' +
+                    Util_Debian.Aptitude('clean')
+                )
+            )
+
+
+class Dialog_TripleBuffer(Gtk.Dialog):
+    def __init__(self, parent=None):
+        super().__init__(
+            title='Triple Buffer Config',
+            transient_for=parent,
+            flags=0
+        )
+        self.set_resizable(True)
+        self.set_default_size(308, 256)
+        
+        # Contenedor principal
+        vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        vbox_main.set_property('expand', True)
+        
+        # Seccion vertical - Comando para ver Triple Buffer
+        command = 'grep drivers /var/log/Xorg.0.log'
+        command_run = subprocess.check_output(
+            command, shell=True, text=True
+        )
+        label = Gtk.Label()
+        label.set_markup(
+            f'<i>{Lang("cmd")}: "{command}</i>\n'
+            '\n'
+            f'<b>{command_run}</b>'
+        )
+        label.set_line_wrap(True)
+        #label.set_max_width_chars(0) # Para verse bien (Posible Bug)
+        label.set_selectable(True)
+        vbox_main.pack_start(label, False, True, 0)
+        
+        # Secciones Verticales - Botones
+        list_graphic = [
+            Lang('gpc_amd'),
+            Lang('gpc_intel'),
+        ]
+        for graphic in list_graphic:
+            button_graphic = Gtk.Button(label=graphic)
+            button_graphic.connect('clicked', self.evt_TripleBuffer_graphic)
+            vbox_main.pack_start(button_graphic, True, False, 0)
+        
+        # Fin, mostrar dialogo
+        self.get_content_area().add(vbox_main)
+        self.show_all()
+    
+    def get_dict_graphic(self):
+        dict_graphic = {
+            Lang('gpc_amd'): '20-radeon.conf',
+            Lang('gpc_intel'): '20-intel-gpu.conf'
+        }
+        return dict_graphic
+    
+    def evt_TripleBuffer_graphic(self, button):
+        button_graphic = button.get_label()
+        dict_graphic = self.get_dict_graphic()
+        
+        if button_graphic in dict_graphic:
+            graphic = dict_graphic[button_graphic]
+            
+            Config_Save(
+                parent=self,
+                cfg=Util_Debian.TripleBuffer(graphic)
+            )
+        else:
+            pass
 
 
 class Dialog_mouse_cfg(Gtk.Dialog):
