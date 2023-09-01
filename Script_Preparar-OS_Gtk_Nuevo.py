@@ -50,7 +50,7 @@ class Window_Main(Gtk.Window):
         vbox_main.pack_start(button_auto, True, False, 0)
         
         button_apps = Gtk.Button( label=Lang('app_menu') )
-        #button_apps.connect('clicked', self.evt_application)
+        button_apps.connect('clicked', self.evt_application)
         vbox_main.pack_start(button_apps, True, False, 0)
         
         button_apt = Gtk.Button( label='Aptitude' )
@@ -90,6 +90,13 @@ class Window_Main(Gtk.Window):
         
         # Fin, mostrar todo
         self.add(vbox_main)
+    
+    def evt_application(self, widget):
+        dialog = Dialog_apps_menu(parent=self)
+        self.hide()
+        dialog.run()
+        dialog.destroy()
+        self.show_all()
         
     def evt_aptitude(self, widget):
         dialog = Dialog_Aptitude(parent=self)
@@ -138,6 +145,65 @@ class Window_Main(Gtk.Window):
         dialog.run()
         dialog.destroy()
         self.show_all()
+
+
+class Dialog_apps_menu(Gtk.Dialog):
+    def __init__(self, parent=None):
+        super().__init__(
+            title=Lang('app_menu'),
+            transient_for=parent,
+            flags=0
+        )
+        
+        self.set_resizable(True)
+        self.set_default_size(308, 256)
+        
+        # Contenedor Principal
+        vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        vbox_main.set_property('expand', True)
+        
+        # Secciones verticales - Opciones
+        button_app_essential = Gtk.Button( label=Lang('essential') )
+        button_app_essential.connect('clicked', self.evt_app_essential)
+        vbox_main.pack_start(button_app_essential, True, False, 0)
+        
+        button_app_dependence = Gtk.Button( label=Lang('depens') )
+        button_app_dependence.connect('clicked', self.evt_app_dependence)
+        vbox_main.pack_start(button_app_dependence, True, False, 0)
+        
+        button_app_uninstall = Gtk.Button( label=Lang('utll') )
+        button_app_uninstall.connect('clicked', self.evt_app_uninstall)
+        vbox_main.pack_start(button_app_uninstall, True, False, 0)
+        
+        button_app_desktop = Gtk.Button( label=Lang('desk') )
+        #button_app_desktop.connect('clicked', self.evt_app_desktop)
+        vbox_main.pack_start(button_app_desktop, True, False, 0)
+        
+        button_app_optional = Gtk.Button( label=Lang('optional') )
+        #button_app_optional.connect('clicked', self.evt_app_optional)
+        vbox_main.pack_start(button_app_optional, True, False, 0)
+        
+        # Fin, mostrar todo
+        self.get_content_area().add(vbox_main)
+        self.show_all()
+    
+    def evt_app_essential(self, widget):
+        Config_Save(
+            parent=self,
+            cfg=Util_Debian.App(opc='Essential')
+        )
+        
+    def evt_app_dependence(self, widget):
+        Config_Save(
+            parent=self,
+            cfg=Util_Debian.App(opc='Dependence')
+        )
+        
+    def evt_app_uninstall(self, widget):
+        Config_Save(
+            parent=self,
+            cfg=Util_Debian.App(opc='Uninstall')
+        )
 
 
 class Dialog_Aptitude(Gtk.Dialog):
