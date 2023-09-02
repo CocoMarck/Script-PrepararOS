@@ -156,7 +156,7 @@ class Dialog_apps_menu(Gtk.Dialog):
         )
         
         self.set_resizable(True)
-        self.set_default_size(308, 256)
+        self.set_default_size(256, 0)
         
         # Contenedor Principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -176,11 +176,11 @@ class Dialog_apps_menu(Gtk.Dialog):
         vbox_main.pack_start(button_app_uninstall, True, False, 0)
         
         button_app_desktop = Gtk.Button( label=Lang('desk') )
-        #button_app_desktop.connect('clicked', self.evt_app_desktop)
+        button_app_desktop.connect('clicked', self.evt_app_desktop)
         vbox_main.pack_start(button_app_desktop, True, False, 0)
         
         button_app_optional = Gtk.Button( label=Lang('optional') )
-        #button_app_optional.connect('clicked', self.evt_app_optional)
+        button_app_optional.connect('clicked', self.evt_app_optional)
         vbox_main.pack_start(button_app_optional, True, False, 0)
         
         # Fin, mostrar todo
@@ -203,6 +203,176 @@ class Dialog_apps_menu(Gtk.Dialog):
         Config_Save(
             parent=self,
             cfg=Util_Debian.App(opc='Uninstall')
+        )
+    
+    def evt_app_desktop(self, widget):
+        dialog = Dialog_app_desktop(parent=self)
+        dialog.run()
+        dialog.destroy()
+    
+    def evt_app_optional(self, widget):
+        dialog = Dialog_app_optional(parent=self)
+        dialog.run()
+        dialog.destroy()
+
+
+class Dialog_app_desktop(Gtk.Dialog):
+    def __init__(self, parent=None):
+        super().__init__(
+            title=Lang('app_desk'),
+            transient_for=parent,
+            flags=0
+        )
+        
+        self.set_resizable(True)
+        self.set_default_size(308, 128)
+        
+        # Contenedor Principal
+        vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        vbox_main.set_property('expand', True)
+        
+        # Secciones Verticales - Opciones
+        for desktop in [
+            'Desktop-xfce4',
+            'Desktop-kdeplasma',
+            'Desktop-gnome3',
+            'Desktop-lxde',
+            'Desktop-mate'
+        ]:
+            button_app_desktop = Gtk.Button(label=desktop)
+            button_app_desktop.connect('clicked', self.evt_app_desktop)
+            vbox_main.pack_start(button_app_desktop, True, False, 0)
+        
+        # Fin, mostrar todo
+        self.get_content_area().add(vbox_main)
+        self.show_all()
+    
+    def evt_app_desktop(self, button):
+        Config_Save(
+            parent=self,
+            cfg=Util_Debian.App( button.get_label() )
+        )
+
+
+class Dialog_app_optional(Gtk.Dialog):
+    def __init__(self, parent=None):
+        super().__init__(
+            title=Lang('app_optional'),
+            transient_for=parent,
+            flags=0
+        )
+        
+        self.set_resizable(True)
+        self.set_default_size(512, 512)
+        
+        # Contenedor principal
+        vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        vbox_main.set_property('expand', True)
+        
+        # Secciones verticales - Todos los widgets
+        scroll_app_optional = Gtk.ScrolledWindow()
+        scroll_app_optional.set_hexpand(True)
+        scroll_app_optional.set_vexpand(True)
+        vbox_main.pack_start(scroll_app_optional, True, True, 0)
+        
+        self.dir_app_optional = f'{cfg_dir}App_Optional/'
+        if not (
+            Path(
+                f'{self.dir_app_optional}App_Optional-wine.txt'
+            ).exists() or
+            Path(
+                f'{self.dir_app_optional}App_Optional-flatpak.txt'
+            ).exists() or
+            Path(
+                f'{self.dif_app_optional}App_Optional-woeusb-ng.txt'
+            ).exists()
+        ):
+            Util_Debian.App('Optional-wine')
+            Util_Debian.App('Optional-flatpak')
+            Util_Debian.App('Optional-woeusb-ng')
+        
+        try:
+            vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+            scroll_app_optional.add(vbox)
+            
+            archives = Files_List(
+                files='App_Optional-*.txt',
+                path=self.dir_app_optional,
+                remove_path=True
+            )
+            
+            self.list_app_optional = []
+            for text_app_optional in archives:
+                button_app_optional = Gtk.Button( label=text_app_optional )
+                button_app_optional.connect('clicked', self.evt_app_optional)
+                vbox.pack_start(button_app_optional, True, False, 0)
+                
+                self.list_app_optional.append(text_app_optional)
+        except:
+            pass
+        
+        # Seccion Vertical para agregar todas las apps
+        button_app_all_optional = Gtk.Button( label=Lang('all_apps') )
+        button_app_all_optional.connect('clicked', self.evt_app_all_optional)
+        vbox_main.pack_end(button_app_all_optional, False, False, 32)
+        
+        # Fin, mostrar todo
+        self.get_content_area().add(vbox_main)
+        self.show_all()
+    
+    def evt_app_optional(self, button):
+        app_optional = button.get_label()
+        text_app_optional = (app_optional.split('App_Optional-'))[1]
+        text_app_optional = (text_app_optional.split(".txt"))[0]
+        if app_optional in self.list_app_optional:
+            Config_Save(
+                parent=self,
+                cfg = Util_Debian.App(
+                    txt_title=f'{Lang("app")} / {text_app_optional}',
+                    txt_add='',
+                    cfg_dir='./',
+                    cfg_file=(
+                        self.dir_app_optional +
+                        app_optional
+                    ),
+                    opc='continue'
+                )
+            )
+        else:
+            pass
+    
+    def evt_app_all_optional(self, widget):
+        app = ''
+        app_all = ''
+        line_jump='&&\n\n'
+        
+        for app_optional in self.list_app_optional:
+            text_app_optional = (app_optional.split('App_Optional-'))[1]
+            text_app_optional = (text_app_optional.split(".txt"))[0]
+            
+            app = Util_Debian.App(
+                txt=line_jump,
+                txt_title=f'{Lang("app")} / {text_app_optional}',
+                txt_add='',
+                cfg_dir='./',
+                cfg_file=(
+                    self.dir_app_optional +
+                        app_optional
+                ),
+                opc='continue'
+            )
+            app_all += app
+        
+        # Esto es el caracter 4 de la line_jump...
+        if '&' == app_all[-4]:
+            app_all = app_all[:-4]
+        else:
+            pass
+        
+        # Ejecutar comando para instalar todas las apps opcionales
+        Config_Save(
+            parent=self,
+            cfg=app_all
         )
 
 
