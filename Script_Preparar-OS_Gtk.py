@@ -92,29 +92,29 @@ class Window_Main(Gtk.Window):
         self.add(vbox_main)
     
     def evt_automatic(self, widget):
-        dialog = Dialog_Automatic(parent=self)
         self.hide()
+        dialog = Dialog_Automatic(parent=self)
         dialog.run()
         dialog.destroy()
         self.show_all()
     
     def evt_application(self, widget):
-        dialog = Dialog_apps_menu(parent=self)
         self.hide()
+        dialog = Dialog_apps_menu(parent=self)
         dialog.run()
         dialog.destroy()
         self.show_all()
         
     def evt_aptitude(self, widget):
-        dialog = Dialog_Aptitude(parent=self)
         self.hide()
+        dialog = Dialog_Aptitude(parent=self)
         dialog.run()
         dialog.destroy()
         self.show_all()
     
     def evt_triple_buffer(self, widget):
-        dialog = Dialog_TripleBuffer(parent=self)
         self.hide()
+        dialog = Dialog_TripleBuffer(parent=self)
         dialog.run()
         dialog.destroy()
         self.show_all()
@@ -126,8 +126,8 @@ class Window_Main(Gtk.Window):
         )
     
     def evt_mouse_cfg(self, widget):
-        dialog = Dialog_mouse_cfg(self)
         self.hide()
+        dialog = Dialog_mouse_cfg(self)
         dialog.run()
         dialog.destroy()
         self.show_all()
@@ -143,12 +143,12 @@ class Window_Main(Gtk.Window):
             )
     
     def evt_view_cfg(self, widget):
+        self.hide()
         dialog = Util_Gtk.Dialog_TextView(
             self,
             text=cfg_file,
             edit=False
         )
-        self.hide()
         dialog.run()
         dialog.destroy()
         self.show_all()
