@@ -1,17 +1,17 @@
-from Modulos.Modulo_System import(
+from logic.Modulo_System import(
     Command_Run
 )
 
-#from Modulos.Modulo_Text import(
+#from logic.Modulo_Text import(
 #    Text_Read
 #)
 
-from Modulos.Modulo_Files import(
+from logic.Modulo_Files import(
     Files_List
 )
-from Modulos import Modulo_Util_Debian as Util_Debian
-from Modulos.Modulo_Language import get_text as Lang
-from Interface import Modulo_Util_Qt as Util_Qt
+from data import Modulo_Util_Debian as Util_Debian
+from data.Modulo_Language import get_text as Lang
+from interface import Modulo_Util_Qt as Util_Qt
 from pathlib import Path
 import subprocess
 
@@ -34,8 +34,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 
 
-cfg_file = f'Script_CFG.txt'
-cfg_dir = 'Script_Apps/'
+cfg_file = Util_Debian.file_script_cfg
+cfg_dir = Util_Debian.dir_script_apps
 
 
 def Config_Save(parent=None, cfg=None):
@@ -232,32 +232,9 @@ class Dialog_Automatic(QDialog):
         hbox.addStretch()
         
         self.combobox_app_optional = QComboBox()
-        self.path_app_optional = f'{cfg_dir}App_Optional/'
-        if(
-            Path(
-                self.path_app_optional +
-                'App_Optional-wine.txt'
-            ).exists() or
-            Path(
-                self.path_app_optional +
-                'App_Optional-flatpak.txt'
-            ).exists() or
-            Path(
-                self.path_app_optional +
-                'App_Optional-woeusb-ng.txt'
-            ).exists()
-        ):
-            pass
-        else:
-            Util_Debian.App('Optional-wine')
-            Util_Debian.App('Optional-flatpak')
-            Util_Debian.App('Optional-woeusb-ng')
+        self.path_app_optional = Util_Debian.dir_app_optional
         
-        archives = Files_List(
-            files='App_Optional-*.txt',
-            path=self.path_app_optional,
-            remove_path=True
-        )
+        archives = Util_Debian.get_app_optional()
         for app_optional in archives:
             self.combobox_app_optional.addItem(app_optional)
         hbox.addWidget(self.combobox_app_optional)
@@ -525,33 +502,10 @@ class Dialog_app_optional(QDialog):
         widget_buttons.setLayout(vbox)
         
         # Scroll - Layout - Botones en orden vertical
-        self.path_app_optional = f'{cfg_dir}App_Optional/'
-        if (
-            Path(
-                f'{self.path_app_optional}'
-                'App_Optional-wine.txt'
-            ).exists() or
-            Path(
-                f'{self.path_app_optional}'
-                'App_Optional-flatpak.txt'
-            ).exists() or
-            Path(
-                f'{self.path_app_optional}'
-                'App_Optional-woeusb-ng.txt'
-            ).exists()
-        ):
-            pass
-        else:
-            Util_Debian.App('Optional-wine')
-            Util_Debian.App('Optional-flatpak')
-            Util_Debian.App('Optional-woeusb-ng')
+        self.path_app_optional = Util_Debian.dir_app_optional
         
         try:
-            archives_app_optional = Files_List(
-                files='App_Optional-*.txt',
-                path=self.path_app_optional,
-                remove_path=True
-            )
+            archives_app_optional = Util_Debian.get_app_optional()
             
             self.list_app_optional = []
             for text_app_optional in archives_app_optional:
@@ -637,10 +591,8 @@ class Dialog_TripleBuffer(QDialog):
         self.setLayout(vbox_main)
         
         # Secciones Vertical - Comando para ver Triple Buffer
-        command = 'grep drivers /var/log/Xorg.0.log'
-        command_run = subprocess.check_output(
-            command, shell=True, text=True
-        )
+        command = Util_Debian.cmd_triple_buffer
+        command_run = Util_Debian.cmd_run_triple_buffer
         label_command = QLabel(
             f'<i>{Lang("cmd")}: "{command}</i>\n'
             '\n'
@@ -710,10 +662,7 @@ class Dialog_mouse_config(QDialog):
         )
         hbox.addWidget(button_acceleration)
         
-        if Path(
-            '/usr/share/X11/xorg.conf.d/'
-            '50-mouse-acceleration.conf'
-        ).exists():
+        if Util_Debian.exists_mouse_config():
             button_acceleration.setChecked(False)
             button_acceleration.setText(Lang("acclr_off"))
         else:

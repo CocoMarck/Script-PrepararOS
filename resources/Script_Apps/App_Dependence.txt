@@ -1,0 +1,24 @@
+# Dependecias unicamente para xfce4
+#gir1.2-libxfce4ui-2.0
+#gir1.2-libxfce4util-1.0
+
+
+# Dependencias para que funcionen bien muchos programas
+wget                    # Recuperador por red no interactivo. (Descargar archivos)
+curl                    # Para obtener informacion especifica del internet
+openjfx                 # Libreria Grafica para java
+fonts-noto-color-emoji  # Para que se vean los iconos
+youtube-dl
+libsdl2-mixer-2.0-0
+libqt5widgets5
+
+# Dependencias unicamente en 32 bits
+# El update es Para instalar correctamente las librerias de 32 bits
+&& sudo apt update && sudo apt install
+libc6:i386
+libasound2:i386
+libasound2-data:i386
+libasound2-plugins:i386
+libgtk2.0-0:i386
+libxml2:i386
+libsm6:i386

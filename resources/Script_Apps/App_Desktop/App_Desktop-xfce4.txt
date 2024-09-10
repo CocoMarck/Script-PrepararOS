@@ -1,0 +1,19 @@
+# Applicaciones que utilizo y no estan instaladas en xfce4
+gnome-calculator                # Calculadora gnome
+eog                             # Visor de imagenes gnome
+bijiben                         # Notas Gnome
+gvfs-backends                   # Para acceder al celular desde thunar
+menulibre                       # Para administrar los accesos.desktop
+gnome-software                  # Tienda de apps Gnome
+atril                           # Ver PDF
+file-roller                     # Para abrir los comprimidos
+xfce4-goodies                   # Utilirias para xfce4
+lightdm-gtk-greeter-settings    # Para adminisrtrar lighdm
+xfce4-panel-profiles		# Perfiles para el xfce4 panel
+
+bluez                   # Bluetooth
+dbus                    # Bluetooth
+blueman                 # Bluetooth
+pipewire                # Bluetooth
+pulseaudio              # Bluetooth
+libspa-0.2-bluetooth    # Bluetooth

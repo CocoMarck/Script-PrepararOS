@@ -1,15 +1,15 @@
-from Modulos.Modulo_System import(
+from logic.Modulo_System import(
     Command_Run
 )
 
-from Modulos.Modulo_Files import(
+from logic.Modulo_Files import(
     Files_List
 )
 
-from Modulos import Modulo_Util_Debian as Util_Debian
-from Modulos.Modulo_Language import get_text as Lang
+from data import Modulo_Util_Debian as Util_Debian
+from data.Modulo_Language import get_text as Lang
 
-from Interface import Modulo_Util_Gtk as Util_Gtk
+from interface import Modulo_Util_Gtk as Util_Gtk
 
 from pathlib import Path
 import subprocess
@@ -19,8 +19,8 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
 
-cfg_file = 'Script_CFG.txt'
-cfg_dir = 'Script_Apps/'
+cfg_file = Util_Debian.file_script_cfg
+cfg_dir = Util_Debian.dir_script_apps
 
 
 def Config_Save(parent=None, cfg=None):
@@ -210,29 +210,11 @@ class Dialog_Automatic(Gtk.Dialog):
         self.checkbutton_app_optional.set_active(False)
         hbox.pack_start(self.checkbutton_app_optional, False, True, 0)
         
-        self.dir_app_optional = f'{cfg_dir}App_Optional/'
-        if not (
-            Path(
-                self.dir_app_optional + 'App_Optional-wine.txt'
-            ).exists() or
-            Path(
-                self.dir_app_optional + 'App_Optional-flatpak.txt'
-            ).exists() or
-            Path(
-                self.dir_app_optional + 'App_Optional-woeusb-ng.txt'
-            ).exists()
-        ):
-            Util_Debian.App('Optional-wine')
-            Util_Debian.App('Optional-flatpak')
-            Util_Debian.App('Optional-woeusb-ng')
+        self.dir_app_optional = Util_Debian.dir_app_optional
         
         liststore_app_optional = Gtk.ListStore(str)
         
-        archives_app_optional = Files_List(
-            files='App_Optional-*.txt',
-            path=self.dir_app_optional,
-            remove_path=True
-        )
+        archives_app_optional = Util_Debian.get_app_optional()
         for app_optional in archives_app_optional:
             text_app_optional = (app_optional.split('App_Optional-'))[1]
             text_app_optional = (text_app_optional.split(".txt"))[0]
@@ -435,31 +417,13 @@ class Dialog_app_optional(Gtk.Dialog):
         scroll_app_optional.set_vexpand(True)
         vbox_main.pack_start(scroll_app_optional, True, True, 0)
         
-        self.dir_app_optional = f'{cfg_dir}App_Optional/'
-        if not (
-            Path(
-                f'{self.dir_app_optional}App_Optional-wine.txt'
-            ).exists() or
-            Path(
-                f'{self.dir_app_optional}App_Optional-flatpak.txt'
-            ).exists() or
-            Path(
-                f'{self.dif_app_optional}App_Optional-woeusb-ng.txt'
-            ).exists()
-        ):
-            Util_Debian.App('Optional-wine')
-            Util_Debian.App('Optional-flatpak')
-            Util_Debian.App('Optional-woeusb-ng')
+        self.dir_app_optional = Util_Debian.dir_app_optional
         
         try:
             vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
             scroll_app_optional.add(vbox)
             
-            archives = Files_List(
-                files='App_Optional-*.txt',
-                path=self.dir_app_optional,
-                remove_path=True
-            )
+            archives = Util_Debian.get_app_optional()
             
             self.list_app_optional = []
             for app_optional in archives:
@@ -645,10 +609,8 @@ class Dialog_TripleBuffer(Gtk.Dialog):
         vbox_main.set_property('expand', True)
         
         # Seccion vertical - Comando para ver Triple Buffer
-        command = 'grep drivers /var/log/Xorg.0.log'
-        command_run = subprocess.check_output(
-            command, shell=True, text=True
-        )
+        command = Util_Debian.cmd_triple_buffer
+        command_run = Util_Debian.cmd_run_triple_buffer
         label = Gtk.Label()
         label.set_markup(
             f'<i>{Lang("cmd")}: "{command}</i>\n'
@@ -737,11 +699,7 @@ class Dialog_mouse_cfg(Gtk.Dialog):
         self.show_all()
     
     def get_mouse_acceleration(self):
-        text_mouse_acceleration =(
-            '/usr/share/X11/xorg.conf.d/'
-            '50-mouse-acceleration.conf'
-        )
-        if Path(text_mouse_acceleration).exists():
+        if Util_Debian.exists_mouse_config():
             return False
         else:
             return True

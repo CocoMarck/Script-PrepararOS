@@ -1,0 +1,2 @@
+# Este es un comentario de prueba, saludos desde México.
+sudo dpkg -i ./DEBS/*.deb # Para instalar debs por medio de la carpeta Debs

@@ -1,0 +1,11 @@
+Essential
+Dependence
+Uninstall
+Desktop-xfce4
+Desktop-kdeplasma
+Desktop-gnome3
+Desktop-lxde
+Desktop-mate
+Optional-flatpak
+Optional-wine
+Optional-woeusb-ng

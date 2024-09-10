@@ -1,0 +1,13 @@
+# Aplicaciones-dependencias que no utilizo
+mozc-data
+mozc-server
+mlterm-common
+xiterm+thai
+fcitx-data
+fcitx5-data
+fcitx-module-dbus
+goldendict
+uim
+anthy
+kasumi
+audacious

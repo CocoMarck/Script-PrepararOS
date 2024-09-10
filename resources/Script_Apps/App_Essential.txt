@@ -1,0 +1,21 @@
+python3-full		# Python
+bleachbit               # Aplicacion para limpiar el pc
+transmission            # Para abrir torrents
+p7zip-full              # Para abrir todo tipo de archivos comprimidos
+ffmpeg                  # Utileria muy poderosa multimedia
+#scrcpy                  # Para controlar un celular por medio de usb
+adb                     # Entrar a la shell del celular
+htop                    # Mostrar informacion de uso del sistema
+neofetch                # Mostrar informacion del sistema
+mpv                     # Reproducir Multimedia
+gdebi                   # Abrir archivos deb
+mangohud                # Mostrar recursos del sistema en una juego/aplicacion 
+thunderbird             # Cliente de email/correo
+git                     # Gestor de verciones
+telegram-desktop        # Telegram, cliente de mensajeria
+gnome-sound-recorder    # Para grabar el microfono
+cpu-x                   # Para mostrar informacion avanzada del cpu
+gnome-disk-utility      # Para gestionar y ver estadisticas del disco duro
+redshift-gtk            # Para activar modo luz nocturna
+gparted                 # Gestor de particiones
+texlive                 # Para mostrar matematicas de forma adecuada

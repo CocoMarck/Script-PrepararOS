@@ -1,0 +1,11 @@
+# Python3 completo
+sudo apt install python3-full &&
+
+# PyQt6
+sudo apt install python3-pyqt6 &&
+
+# Dist Utils
+sudo apt install python3-distutils &&
+
+# Pandas
+sudo apt install python3-pandas

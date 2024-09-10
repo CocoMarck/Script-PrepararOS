@@ -1,23 +1,23 @@
-from Modulos.Modulo_ShowPrint import(
+from interface.Modulo_ShowPrint import(
     Title,
     Separator,
     Continue
 )
 
-from Modulos.Modulo_System import(
+from logic.Modulo_System import(
     CleanScreen,
     Command_Run
 )
 
-from Modulos.Modulo_Text import(
+from logic.Modulo_Text import(
     Text_Read
 )
 
-from Modulos.Modulo_Files import(
+from logic.Modulo_Files import(
     Files_List
 )
-from Modulos import Modulo_Util_Debian as Util_Debian
-from Modulos.Modulo_Language import get_text as Lang
+from data import Modulo_Util_Debian as Util_Debian
+from data.Modulo_Language import get_text as Lang
 import os, pathlib, subprocess
 
 
@@ -25,7 +25,7 @@ fnl = 'txt'
 err = '# Configuración erronea'
 
 def Script_Menu():
-    cfg_file = f'Script_CFG.{fnl}'
+    cfg_file = Util_Debian.file_script_cfg
     
     loop = True
     while loop == True:
@@ -238,30 +238,11 @@ def App_Menu(opc='Desktop', txt=''):
             cfg = ''
 
     elif opc == 'Optional':
-        if (
-            pathlib.Path('./Script_Apps/App_Optional/'
-                        'App_Optional-wine.txt').exists() or
-        
-            pathlib.Path('./Script_Apps/App_Optional/'
-                        'App_Optional-flatpak.txt').exists() or
-        
-            pathlib.Path('./Script_Apps/App_Optional/'
-                        'App_Optional-woeusb-ng.txt').exists()
-        ): 
-            pass
-            
-        else:
-            Util_Debian.App('Optional-wine')
-            Util_Debian.App('Optional-flatpak')
-            Util_Debian.App('Optional-woeusb-ng')
-            
         try:
-            path_app_optional = 'Script_Apps/App_Optional/'
-            archives = Files_List(
-                files='App_Optional-*.txt',
-                path=path_app_optional,
-                remove_path=True
-            )
+            path_app_optional = Util_Debian.dir_app_optional
+            
+            # Poner archivos en un diccionario
+            archives = Util_Debian.get_app_optional(remove_path=True)
             
             dict_archive = {}
             menu_archive = ''
@@ -271,7 +252,8 @@ def App_Menu(opc='Desktop', txt=''):
                 number += 1
                 menu_archive += f'{number}. {archive}\n'
                 dict_archive.update({number : archive})
-                
+            
+            # Menu de selección de App-Optional    
             opc = int(input(
                 Title(Lang('app_optional'), print_mode=False) +
                 menu_archive +
@@ -280,30 +262,26 @@ def App_Menu(opc='Desktop', txt=''):
             ))
             
             if opc in dict_archive:
+                # Selección indivudual
                 cfg = Util_Debian.App(
                     txt=txt,
                     txt_title = 'Applications / Optional',
                     txt_add = '',
-                    cfg_dir = './',
-                    cfg_file = (
-                        path_app_optional +
-                        str(dict_archive[opc])
-                    ),
+                    cfg_dir = path_app_optional,
+                    cfg_file = str(dict_archive[opc]),
                     opc = 'continue'
                 )
                 
             elif opc == number + 1:
+                # Seleccionar todo
                 cfg = ''
                 while number > 0:
                     cfg += Util_Debian.App(
                         txt='&&\n\n',
                         txt_title='Application / Optional',
                         txt_add='',
-                        cfg_dir='./',
-                        cfg_file=(
-                            path_app_optional +
-                            str(dict_archive[number])
-                        ),
+                        cfg_dir=path_app_optional,
+                        cfg_file= str(dict_archive[number]),
                         opc='continue'
                     )
                     number -= 1 
@@ -323,12 +301,8 @@ def App_Menu(opc='Desktop', txt=''):
 
 
 def Triple_Buffer(txt=''):
-    cmd = 'grep drivers /var/log/Xorg.0.log'
-    cmd_run = str(
-        subprocess.check_output(
-            cmd, shell=True
-        )
-    )
+    cmd = Util_Debian.cmd_triple_buffer
+    cmd_run = Util_Debian.cmd_run_triple_buffer
     
     print(
         f'{Lang("cmd")}: "{cmd}"\n'
@@ -373,10 +347,7 @@ def Triple_Buffer(txt=''):
 def Mouse_Config():
     Title( Lang('cfg_mouse') )
 
-    if pathlib.Path(
-        '/usr/share/X11/xorg.conf.d/'
-        '50-mouse-acceleration.conf'
-    ).exists():
+    if Util_Debian.exists_mouse_config():
         option = Continue(f'{Lang("acclr_off")} ¿{Lang("on")}?')
         if option == 's':
             option = Util_Debian.Mouse_Config('AccelerationON')
