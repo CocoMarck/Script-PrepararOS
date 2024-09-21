@@ -579,11 +579,8 @@ class Dialog_app_optional(QDialog):
                 txt = line_jump,
                 txt_title = f'{Lang("app")} / {text_app_optional}',
                 txt_add = '',
-                cfg_dir = './',
-                cfg_file = (
-                    self.path_app_optional +
-                    text_app_optional
-                ),
+                cfg_dir = self.path_app_optional,
+                cfg_file = text_app_optional,
                 opc = 'continue'
             )
             app_all += app

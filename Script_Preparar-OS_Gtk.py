@@ -498,11 +498,8 @@ class Dialog_app_optional(Gtk.Dialog):
                 txt=line_jump,
                 txt_title=f'{Lang("app")} / {text_app_optional}',
                 txt_add='',
-                cfg_dir='./',
-                cfg_file=(
-                    self.dir_app_optional +
-                        app_optional
-                ),
+                cfg_dir=self.dir_app_optional,
+                cfg_file=app_optional,
                 opc='continue'
             )
             app_all += app
