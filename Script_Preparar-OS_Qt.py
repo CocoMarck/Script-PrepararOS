@@ -9,9 +9,15 @@ from logic.Modulo_System import(
 from logic.Modulo_Files import(
     Files_List
 )
+
 from data import Modulo_Util_Debian as Util_Debian
 from data.Modulo_Language import get_text as Lang
+from data.interface_data import *
+
 from interface import Modulo_Util_Qt as Util_Qt
+from interface.interface_number import *
+from interface.css_util import *
+
 from pathlib import Path
 import subprocess
 
@@ -29,11 +35,26 @@ from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QVBoxLayout,
-    QHBoxLayout,
+    QHBoxLayout
 )
+from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt
 
 
+
+# Estilo qss
+qss_style = ''
+for widget in get_list_text_widget('Qt'):
+    qss_style += text_widget_style( 
+        widget=widget, font=file_font, font_size=num_font,
+        margin_xy=nums_margin, padding=num_space_padding, idented=4
+    )
+print(qss_style)
+
+
+
+
+# Programa
 cfg_file = Util_Debian.file_script_cfg
 cfg_dir = Util_Debian.dir_script_apps
 
@@ -45,22 +66,25 @@ def Config_Save(parent=None, cfg=None):
         Util_Qt.Dialog_Command_Run(
             parent=parent,
             cmd=cfg,
-            cfg_file=cfg_file
+            cfg_file=cfg_file,
+            size=nums_win_command_run
         ).exec()
 
 
 class Window_Main(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.setWindowIcon( QIcon( file_icon ) )
         self.setWindowTitle('Preparing OS')
-        self.resize(308, 308)
+        self.resize(nums_win_main[0], nums_win_main[1])
         
         # Contenedor principal
         vbox_main = QVBoxLayout()
         self.setLayout(vbox_main)
         
         # Secciones verticales - Opciones
-        vbox_main.addStretch()
+        #vbox_main.addStretch()
         
         button_auto = QPushButton( Lang('auto') )
         button_auto.clicked.connect(self.evt_automatic)
@@ -182,7 +206,8 @@ class Window_Main(QWidget):
         Util_Qt.Dialog_TextEdit(
             self,
             text=cfg_file,
-            edit=False
+            edit=False,
+            size=nums_win_text_edit
         ).exec()
         self.show()
     
@@ -195,7 +220,7 @@ class Dialog_Automatic(QDialog):
         super().__init__(parent)
         
         self.setWindowTitle('Automatic Mode')
-        self.resize(512, 128)
+        self.resize(nums_win_automatic[0], nums_win_automatic[1])
         
         # Contenedor principal
         vbox_main = QVBoxLayout()
@@ -297,7 +322,7 @@ class Dialog_Aptitude(QDialog):
         super().__init__(parent)
         
         self.setWindowTitle('Aptitude')
-        self.resize(308, 256)
+        self.resize(nums_win_apt[0], nums_win_apt[1])
         
         # Contenedor Principal
         vbox_main = QVBoxLayout()
@@ -389,7 +414,7 @@ class Dialog_apps_menu(QDialog):
         super().__init__(parent)
         
         self.setWindowTitle(Lang('app_menu'))
-        self.resize(308, 256)
+        self.resize(nums_win_apps[0], nums_win_apps[1])
         
         # Contenedor principal
         vbox_main = QVBoxLayout()
@@ -480,7 +505,7 @@ class Dialog_app_optional(QDialog):
         super().__init__(parent)
         
         self.setWindowTitle( Lang('app_optional') )
-        self.resize(308, 360)
+        self.resize(nums_win_app_optional[0], nums_win_app_optional[1])
         
         # Contenedor Principal
         vbox_main = QVBoxLayout()
@@ -584,7 +609,7 @@ class Dialog_TripleBuffer(QDialog):
         super().__init__(parent)
         
         self.setWindowTitle( 'Triple Buffer Config' )
-        self.resize(308, 256)
+        self.resize(nums_win_triple_buffer[0], nums_win_triple_buffer[1])
         
         # Contenedor principal
         vbox_main = QVBoxLayout()
@@ -642,7 +667,7 @@ class Dialog_mouse_config(QDialog):
         super().__init__(parent)
         
         self.setWindowTitle('Mouse Config')
-        self.resize(256, 128)
+        self.resize(nums_win_mouse_cfg[0], nums_win_mouse_cfg[1])
         
         # Contenedor Principal
         vbox_main = QVBoxLayout()
@@ -685,5 +710,6 @@ class Dialog_mouse_config(QDialog):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setStyleSheet(qss_style)
     window = Window_Main()
     sys.exit(app.exec())

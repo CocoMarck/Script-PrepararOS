@@ -8,15 +8,36 @@ from logic.Modulo_Files import(
 
 from data import Modulo_Util_Debian as Util_Debian
 from data.Modulo_Language import get_text as Lang
+from data.interface_data import *
 
 from interface import Modulo_Util_Gtk as Util_Gtk
+from interface.interface_number import *
+from interface.css_util import *
 
 from pathlib import Path
 import subprocess
 
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
+
+
+
+# Estilo qss
+css_style = ''
+for widget in get_list_text_widget('Gtk'):
+    css_style += text_widget_style( 
+        widget=widget, font=file_font, font_size=num_font,
+        padding=num_space_padding, idented=4
+    )
+screen = Gdk.Screen.get_default()
+provider = Gtk.CssProvider()
+style_context = Gtk.StyleContext()
+style_context.add_provider_for_screen(
+    screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+)
+provider.load_from_data( str.encode(css_style) ) # Cargar CSS. CSS en modo bytes
+print(css_style)
 
 
 cfg_file = Util_Debian.file_script_cfg
@@ -28,7 +49,8 @@ def Config_Save(parent=None, cfg=None):
         dialog = Util_Gtk.Dialog_Command_Run(
             parent=parent,
             cfg=cfg,
-            cfg_file=cfg_file
+            cfg_file=cfg_file,
+            size=nums_win_command_run
         )
         dialog.run()
         dialog.destroy()
@@ -36,8 +58,10 @@ def Config_Save(parent=None, cfg=None):
 class Window_Main(Gtk.Window):
     def __init__(self):
         super().__init__(title='Preparing OS')
+
+        self.set_icon_from_file( file_icon )
         self.set_resizable(True)
-        self.set_default_size(308, 308)
+        self.set_default_size(nums_win_main[0], nums_win_main[1])
         
         # Contenedor principal
         vbox_main = Gtk.Box(
@@ -147,7 +171,8 @@ class Window_Main(Gtk.Window):
         dialog = Util_Gtk.Dialog_TextView(
             self,
             text=cfg_file,
-            edit=False
+            edit=False,
+            size=nums_win_text_edit
         )
         dialog.run()
         dialog.destroy()
@@ -163,7 +188,7 @@ class Dialog_Automatic(Gtk.Dialog):
         )
         
         self.set_resizable(True)
-        self.set_default_size(512, 128)
+        self.set_default_size(nums_win_automatic[0], nums_win_automatic[1])
         
         # Contenedor Principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -298,7 +323,7 @@ class Dialog_apps_menu(Gtk.Dialog):
         )
         
         self.set_resizable(True)
-        self.set_default_size(256, 0)
+        self.set_default_size(nums_win_apps[0], nums_win_apps[1])
         
         # Contenedor Principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -367,7 +392,7 @@ class Dialog_app_desktop(Gtk.Dialog):
         )
         
         self.set_resizable(True)
-        self.set_default_size(308, 128)
+        self.set_default_size(nums_win_app_desktop[0], nums_win_app_desktop[1])
         
         # Contenedor Principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -405,7 +430,7 @@ class Dialog_app_optional(Gtk.Dialog):
         )
         
         self.set_resizable(True)
-        self.set_default_size(512, 512)
+        self.set_default_size(nums_win_app_optional[0], nums_win_app_optional[1])
         
         # Contenedor principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -510,7 +535,7 @@ class Dialog_Aptitude(Gtk.Dialog):
         )
         
         self.set_resizable(True)
-        self.set_default_size(308, 0)
+        self.set_default_size(nums_win_apt[0], nums_win_apt[1])
         
         # Contenedor principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -602,7 +627,7 @@ class Dialog_TripleBuffer(Gtk.Dialog):
             flags=0
         )
         self.set_resizable(True)
-        self.set_default_size(308, 256)
+        self.set_default_size(nums_win_triple_buffer[0], nums_win_triple_buffer[1])
         
         # Contenedor principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -667,7 +692,7 @@ class Dialog_mouse_cfg(Gtk.Dialog):
         )
 
         self.set_resizable(True)
-        self.set_default_size(256, 128)
+        self.set_default_size( nums_win_mouse_cfg[0], nums_win_mouse_cfg[1] )
         
         # Contenedor principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
