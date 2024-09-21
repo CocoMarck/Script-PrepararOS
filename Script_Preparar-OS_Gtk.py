@@ -290,11 +290,8 @@ class Dialog_Automatic(Gtk.Dialog):
                     f'{Lang("app")} {Lang("optional")} / {text_app_optional}'
                 ),
                 txt_add='',
-                cfg_dir='./',
-                cfg_file=(
-                    self.dir_app_optional +
-                    app_optional
-                ),
+                cfg_dir=self.dir_app_optional,
+                cfg_file=app_optional,
                 opc='continue'
             )
         else:
@@ -481,11 +478,8 @@ class Dialog_app_optional(Gtk.Dialog):
                 cfg = Util_Debian.App(
                     txt_title=f'{Lang("app")} / {text_app_optional}',
                     txt_add='',
-                    cfg_dir='./',
-                    cfg_file=(
-                        self.dir_app_optional +
-                        app_optional
-                    ),
+                    cfg_dir=self.dir_app_optional,
+                    cfg_file=app_optional,
                     opc='continue'
                 )
             )

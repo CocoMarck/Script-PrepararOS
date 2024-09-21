@@ -291,11 +291,8 @@ class Dialog_Automatic(QDialog):
                     f'{self.combobox_app_optional.currentText()}'
                 ),
                 txt_add='',
-                cfg_dir='./',
-                cfg_file=(
-                    self.path_app_optional +
-                    self.combobox_app_optional.currentText()
-                ),
+                cfg_dir=self.path_app_optional,
+                cfg_file=self.combobox_app_optional.currentText(),
                 opc='continue'
             )
         else:
@@ -564,11 +561,8 @@ class Dialog_app_optional(QDialog):
                 cfg = Util_Debian.App(
                     txt_title = f'{Lang("app")} / {button.text()}',
                     txt_add = '',
-                    cfg_dir = './',
-                    cfg_file = (
-                        self.path_app_optional +
-                        button.text()
-                    ),
+                    cfg_dir = self.path_app_optional,
+                    cfg_file = button.text(),
                     opc = 'continue'
                 )
             )
