@@ -517,6 +517,7 @@ class Dialog_app_optional(QDialog):
         scroll_area.setVerticalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAsNeeded
         )
+        scroll_area.setWidgetResizable(True) # Para centrer el scroll
         vbox_main.addWidget(scroll_area)
         
         # Scroll - Contenedor de Widgets
