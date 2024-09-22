@@ -26,10 +26,16 @@ from gi.repository import Gtk, Gdk
 # Estilo qss
 css_style = ''
 for widget in get_list_text_widget('Gtk'):
-    css_style += text_widget_style( 
-        widget=widget, font=file_font, font_size=num_font,
-        padding=None, idented=4
-    )
+    if widget == 'textview':
+        css_style += text_widget_style( 
+            widget=widget, font=file_font, font_size=num_font,
+            padding=None, idented=4
+        )
+    else:
+        css_style += text_widget_style( 
+            widget=widget, font=file_font, font_size=num_font,
+            padding=num_space_padding, idented=4
+        )
 screen = Gdk.Screen.get_default()
 provider = Gtk.CssProvider()
 style_context = Gtk.StyleContext()
