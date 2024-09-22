@@ -20,7 +20,7 @@ def get_list_text_widget( option='Qt' ) -> list:
             'combobox',
             'entry',
             'textview',
-            'checkbox'
+            'checkbutton'
         ]
         
 
