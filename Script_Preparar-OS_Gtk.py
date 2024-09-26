@@ -195,6 +195,7 @@ class Dialog_Automatic(Gtk.Dialog):
         
         self.set_resizable(True)
         self.set_default_size(nums_win_automatic[0], nums_win_automatic[1])
+        self.parent=parent
         
         # Contenedor Principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -305,7 +306,7 @@ class Dialog_Automatic(Gtk.Dialog):
         
         # Iniciar
         Config_Save(
-            parent=self,
+            parent=self.parent,
             cfg = (
                 Util_Debian.Aptitude('update') + ' &&\n\n' +
                 Util_Debian.App('Essential', '&&\n\n') +
@@ -327,6 +328,7 @@ class Dialog_apps_menu(Gtk.Dialog):
         
         self.set_resizable(True)
         self.set_default_size(nums_win_apps[0], nums_win_apps[1])
+        self.parent = parent
         
         # Contenedor Principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -359,29 +361,29 @@ class Dialog_apps_menu(Gtk.Dialog):
     
     def evt_app_essential(self, widget):
         Config_Save(
-            parent=self,
+            parent=self.parent,
             cfg=Util_Debian.App(opc='Essential')
         )
         
     def evt_app_dependence(self, widget):
         Config_Save(
-            parent=self,
+            parent=self.parent,
             cfg=Util_Debian.App(opc='Dependence')
         )
         
     def evt_app_uninstall(self, widget):
         Config_Save(
-            parent=self,
+            parent=self.parent,
             cfg=Util_Debian.App(opc='Uninstall')
         )
     
     def evt_app_desktop(self, widget):
-        dialog = Dialog_app_desktop(parent=self)
+        dialog = Dialog_app_desktop(parent=self.parent)
         dialog.run()
         dialog.destroy()
     
     def evt_app_optional(self, widget):
-        dialog = Dialog_app_optional(parent=self)
+        dialog = Dialog_app_optional(parent=self.parent)
         dialog.run()
         dialog.destroy()
 
@@ -396,6 +398,7 @@ class Dialog_app_desktop(Gtk.Dialog):
         
         self.set_resizable(True)
         self.set_default_size(nums_win_app_desktop[0], nums_win_app_desktop[1])
+        self.parent=parent
         
         # Contenedor Principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -419,7 +422,7 @@ class Dialog_app_desktop(Gtk.Dialog):
     
     def evt_app_desktop(self, button):
         Config_Save(
-            parent=self,
+            parent=self.parent,
             cfg=Util_Debian.App( button.get_label() )
         )
 
@@ -434,6 +437,7 @@ class Dialog_app_optional(Gtk.Dialog):
         
         self.set_resizable(True)
         self.set_default_size(nums_win_app_optional[0], nums_win_app_optional[1])
+        self.parent = parent
         
         # Contenedor principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -480,7 +484,7 @@ class Dialog_app_optional(Gtk.Dialog):
         app_optional = f'App_Optional-{text_app_optional}.txt'
         if text_app_optional in self.list_app_optional:
             Config_Save(
-                parent=self,
+                parent=self.parent,
                 cfg = Util_Debian.App(
                     txt_title=f'{Lang("app")} / {text_app_optional}',
                     txt_add='',
@@ -518,7 +522,7 @@ class Dialog_app_optional(Gtk.Dialog):
         
         # Ejecutar comando para instalar todas las apps opcionales
         Config_Save(
-            parent=self,
+            parent=self.parent,
             cfg=app_all
         )
 
@@ -533,6 +537,7 @@ class Dialog_Aptitude(Gtk.Dialog):
         
         self.set_resizable(True)
         self.set_default_size(nums_win_apt[0], nums_win_apt[1])
+        self.parent = parent
         
         # Contenedor principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -579,13 +584,13 @@ class Dialog_Aptitude(Gtk.Dialog):
     
     def evt_apt_update(self, widget):
         Config_Save(
-            parent=self,
+            parent=self.parent,
             cfg=Util_Debian.Aptitude('update')
         )
         
     def evt_apt_clean(self, widget):
         Config_Save(
-            parent=self,
+            parent=self.parent,
             cfg=Util_Debian.Aptitude('clean')
         )
     
@@ -593,7 +598,7 @@ class Dialog_Aptitude(Gtk.Dialog):
         app_to_install = self.entry_install.get_text()
         if not app_to_install == '':
             Config_Save(
-                parent=self,
+                parent=self.parent,
                 cfg = (
                     'sudo apt update &&\n\n' +
                     Util_Debian.Aptitude('install') +
@@ -605,7 +610,7 @@ class Dialog_Aptitude(Gtk.Dialog):
         app_to_purge = self.entry_purge.get_text()
         if not app_to_purge == '':
             Config_Save(
-                parent=self,
+                parent=self.parent,
                 cfg = (
                     Util_Debian.Aptitude('purge') +
                     app_to_purge + ' &&\n\n'
@@ -625,6 +630,7 @@ class Dialog_TripleBuffer(Gtk.Dialog):
         )
         self.set_resizable(True)
         self.set_default_size(nums_win_triple_buffer[0], nums_win_triple_buffer[1])
+        self.parent = parent
         
         # Contenedor principal
         vbox_main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -673,7 +679,7 @@ class Dialog_TripleBuffer(Gtk.Dialog):
             graphic = dict_graphic[button_graphic]
             
             Config_Save(
-                parent=self,
+                parent=self.parent,
                 cfg=Util_Debian.TripleBuffer(graphic)
             )
         else:
