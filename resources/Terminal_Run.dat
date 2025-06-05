@@ -1,5 +1,4 @@
-linux=xterm -e
-# Ejecuta xterm
+linux=x-terminal-emulator -e bash -c# Ejecuta xterm
 # xfce4-terminal --startup-id= -e
 
 win=start cmd /c
