@@ -37,7 +37,7 @@ file_script_triple_buffer = os.path.join( dir_data, f'Script_TripleBuffer.{fnl}'
 
 
 # Sistema | Directorios archivos
-dir_x11_config = os.path.join( '/usr/share/X11/xorg.conf.d/' )
+dir_x11_config = os.path.join( '/etc/X11/xorg.conf.d/' )
 dir_apt = os.path.join( '/etc/apt/' )
 
 # Sistema | Archivos
